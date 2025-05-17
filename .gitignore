@@ -3,6 +3,7 @@
 ########################################################
 
 # Custom .gitignore files and folders go here
+content_generation/audio/
 
 ########################################################
 # Boilerplate .gitignore by `npm create vite@latest `

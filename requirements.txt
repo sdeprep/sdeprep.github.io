@@ -1,0 +1,4 @@
+openai-whisper          # state-of-the-art, fully local STT model
+requests
+tqdm
+requests
