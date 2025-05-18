@@ -4,6 +4,8 @@
 
 # Custom .gitignore files and folders go here
 content_generation/audio/
+content_generation/video/
+content_generation/split_videos/
 
 ########################################################
 # Boilerplate .gitignore by `npm create vite@latest `
