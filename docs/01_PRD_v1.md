@@ -79,5 +79,12 @@ The remaining questions use placeholder titles and descriptions until more conte
 5. **Should progress ever expire?** – No, progress in `localStorage` persists and is only replaced when new data is saved.
 
 ## Open Questions
-
 At this time there are no unresolved questions for the product manager.
+
+## Answered Questions
+- **How should additional languages be prioritized?** The website only supports Python.
+- **What long-term persistence mechanism should replace localStorage?** None yet; version 1 relies solely on localStorage.
+- **Which voice command library should be used?** The built-in Web Speech API.
+- **Do we need analytics?** Not for version 1.
+
+
