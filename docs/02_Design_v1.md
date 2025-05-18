@@ -1,51 +1,105 @@
-# Design Document (Version 1)
+# Design Document (Version 1 - Final)
 
-This design describes the initial single‑page web application for practicing interview problems in Python. Version 1 is intentionally fully client‑side, persisting all state in the browser’s `localStorage`; no backend services are required.
+This document expands on the Product Requirements Document and **merges all notes from the earlier “version 2” draft** so no details are lost.  
+The application is a **single-page, fully client-side LeetCode-style coding-practice site**. All state lives in the browser’s `localStorage`; no backend services are required.
+
+---
 
 ## Layout Overview
 
-The page contains three primary regions plus a floating action button:
+The interface is divided into four main areas plus a floating button:
 
-1. **Question Selector Sidebar** – hidden off‑screen on the left and revealed when the pointer hovers near the edge (or via a tap‑to‑open button on mobile). It lists approximately 50 curated questions. Selecting a question loads its full description and starter code.
+1. **Question Selector Sidebar** (left)  
+   - Hidden just off-screen until the user hovers at the far-left edge (or taps an “open” button on mobile).  
+   - Lists **≈ 50 question slots**. Slots 1-11 contain real problems (e.g. *Sort an Array*, *Two Sum*); slots 12-50 are placeholders until more content is prepared.  
+   - Selecting a slot loads its full description *and* starter code into the Main Work Area.
 
-2. **Main Content Area** – itself split into:
+2. **Main Work Area** (center)  
+   - **Question Details Panel** – a narrow column showing the complete problem statement and any constraints. It remains visible while the user writes code.  
+   - **Code Editor** – a **Monaco Editor** instance locked to **Python 3**. Uses a simple monospaced font and supports keyboard shortcuts for common actions.  
+   - **Issue Panel** – hidden by default; a collapsible strip docked to the bottom. It appears when the pointer nears the bottom edge (or via a mobile tap) **after the user presses “Check”** and shows a bullet list of any mismatches reported by the exact validator.
 
-   * **Question Details Panel** – a narrow left column presenting the problem statement and any constraints.
-   * **Code Editor** – a Monaco‑style editor (Python‑only) occupying the majority of the width.
-   * **Issue Panel** – a collapsible strip docked to the bottom that appears when the pointer nears the lower edge (or when triggered from mobile). It shows bullet‑point mismatches whenever the submission fails the strict check.
+3. **Settings Sidebar** (right)  
+   - Revealed on hover at the right edge or by tapping a button on mobile.  
+   - Provides two persistent modes: **Learning** and **Mock** (saved in `localStorage`).  
+   - Includes **Download** and **Upload** buttons that export or import a complete `localStorage` backup so progress can be saved or restored.
 
-3. **Settings Sidebar** – hidden off‑screen on the right; hovering (or tapping) reveals controls for **Learning / Mock** mode, plus **Download** / **Upload** buttons for exporting or importing the entire `localStorage` snapshot.
+4. **Voice Command Button** (floating)  
+   - An orange circular button anchored to the bottom-right corner.  
+   - Pressing it activates the browser’s **Web Speech API** for commands such as “go to question five” or “check code”.  
+   - A small toast near the button shows the live transcription and fades out shortly after.
 
-4. **Voice Command Button** – a floating orange circle anchored to the bottom‑right corner. Pressing it activates the browser’s Web Speech API. A transient toast just above the button displays the live transcription for quick visual feedback.
+---
+
+## Visual Style
+
+- Built with **Tailwind CSS** utility classes for rapid prototyping.  
+- Minimalist look with generous whitespace; elements use subtle gray borders and Tailwind’s default palette for high contrast so the code editor remains the focal point.  
+- Sidebars and the Issue Panel slide in/out with a brief (~200 ms ease-out) animation.  
+- Toasts are small and unobtrusive. The design respects `prefers-reduced-motion`.
+
+---
 
 ## Technologies
 
-| Concern          | Technology                                                     |
-| ---------------- | -------------------------------------------------------------- |
-| Framework & Lang | **React** with **TypeScript**                                  |
-| Styling          | **Tailwind CSS** utility classes                               |
-| Code Editor      | **Monaco Editor** limited to **Python 3** syntax and execution |
-| Voice Commands   | Browser‑native **Web Speech API**                              |
-| Persistence      | Browser **localStorage** with JSON backup / restore            |
+- **React 18 + TypeScript 5** for the single-page application.  
+- **Monaco Editor** limited to **Python 3** syntax and execution.  
+- **Tailwind CSS** (JIT mode) for styling.  
+- **Web Speech API** for voice commands.  
+- **localStorage** for persisting progress indefinitely, with optional JSON backup/restore.
+
+---
 
 ## Key Interactions
 
-1. **Reveal sidebars** – hover near the left or right edge (or tap the corresponding mobile buttons).
-2. **Select a question** – loads description and starter code into the editor.
-3. **Write & Check** – edit the code and press **Check** to run the exact validator and capture any discrepancies.
-4. **Inspect Issues** – hover near the bottom (or tap) to open the Issue Panel and review mismatches point‑by‑point.
-5. **Adjust settings or backup progress** – open the Settings Sidebar.
-6. **Use voice commands** – press the floating button to navigate or insert snippets hands‑free. Keyboard shortcuts exist for all major actions.
+- Hovering near the left or right edge (or tapping the corresponding mobile buttons) reveals the Question Selector or Settings sidebars.  
+- Selecting a question loads its description and starter code into the editor.  
+- Editing code and pressing **“Check”** runs a strict validator; mismatches are sent to the Issue Panel.  
+- Hovering near the bottom (or tapping on mobile) opens the Issue Panel to review failures.  
+- Pressing the Voice Command Button lets users navigate or trigger **Check** hands-free.  
+- Keyboard shortcuts mirror all major actions for accessibility.
+
+---
 
 ## Accessibility and Shortcuts
 
-* Every sidebar and the voice button has an associated keyboard shortcut for screen‑reader friendliness.
-* All hover‑triggered panels also expose explicit touchscreen buttons.
-* Toasts and subtle motion provide status feedback without covering core content.
+- Every sidebar, the Issue Panel, and the Voice Command Button can be toggled/focused with keyboard shortcuts.  
+- ARIA labels are applied to dynamic regions; toasts use polite live-regions for screen-reader feedback.  
+- All hover-triggered actions have explicit tap targets on touch devices.  
+- The layout re-flows responsively; below 640 px width, panels stack vertically.
 
-## Open Questions & Answers for Version 1
+---
 
-1. **Additional programming languages?** Only **Python 3** is supported.&#x20;
-2. **Long‑term persistence?** Stick with `localStorage` for this version
-3. **Voice command engine?** Use the built‑in **Web Speech API**
-4. **Analytics?** Deliberately omitted to keep scope tight for v1
+## Data Persistence
+
+- All per-question code, mode selection, and the last opened slot are stored in a versioned JSON blob in `localStorage`.  
+- Users can **Download** (`.json`) or **Upload** that blob via the Settings Sidebar.  
+- Future versions may move to IndexedDB or an optional backend for cross-device sync.
+
+---
+
+## Open Questions and Suggestions
+
+1. **How should additional programming languages be prioritized?**  
+   - Only Python 3 is supported in Version 1.  
+   - Evaluate demand for JavaScript or others later.
+
+2. **What persistent mechanism should replace `localStorage` long-term?**  
+   - Keep `localStorage` for Version 1.  
+   - Consider IndexedDB or a lightweight backend if cross-device sync becomes important.
+
+3. **Which voice-command technology should be used?**  
+   - Use the browser’s built-in **Web Speech API** for Version 1.  
+   - Investigate third-party services (e.g., Whisper) if reliability proves insufficient.
+
+4. **Should analytics be integrated in the initial release?**  
+   - Skip analytics for Version 1 to stay focused on core functionality.  
+   - Revisit after gathering feedback from early users.
+
+5. **Could a custom theme improve readability in the future?**  
+   - Retain Tailwind’s default palette for maximum contrast in Version 1.  
+   - Reconsider when users request additional theming options.
+
+6. **When should more real problems replace placeholders?**  
+   - Ship with the initial 11 real problems and 39 placeholders.  
+   - Add new real problems gradually as they become available.
