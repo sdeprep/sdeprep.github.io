@@ -5,6 +5,7 @@ Run the following commands with network access before development:
 ```bash
 cd frontend
 npm install
+npm run dev
 ```
 
 Ensure **Node.js 22** is installed locally before running development or build commands.
