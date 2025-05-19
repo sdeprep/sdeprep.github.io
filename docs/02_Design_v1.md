@@ -45,6 +45,7 @@ The interface is divided into four main areas plus a floating button:
 - **React 18 + TypeScript 5** for the single-page application.  
 - **Monaco Editor** limited to **Python 3** syntax and execution.  
 - **Tailwind CSS** (JIT mode) for styling.  
+- Version 1 supports only **Python 3**; additional languages are not planned.
 - **Web Speech API** for voice commands.  
 - **localStorage** for persisting progress indefinitely, with optional JSON backup/restore.
 
@@ -74,32 +75,11 @@ The interface is divided into four main areas plus a floating button:
 
 - All per-question code, mode selection, and the last opened slot are stored in a versioned JSON blob in `localStorage`.  
 - Users can **Download** (`.json`) or **Upload** that blob via the Settings Sidebar.  
-- Future versions may move to IndexedDB or an optional backend for cross-device sync.
+- Version 1 relies exclusively on `localStorage`; no replacement is planned.
 
 ---
 
-## Open Questions and Suggestions
 
-1. **How should additional programming languages be prioritized?**  
-   - Only Python 3 is supported in Version 1.  
-   - Evaluate demand for JavaScript or others later.
+## Analytics
 
-2. **What persistent mechanism should replace `localStorage` long-term?**  
-   - Keep `localStorage` for Version 1.  
-   - Consider IndexedDB or a lightweight backend if cross-device sync becomes important.
-
-3. **Which voice-command technology should be used?**  
-   - Use the browser’s built-in **Web Speech API** for Version 1.  
-   - Investigate third-party services (e.g., Whisper) if reliability proves insufficient.
-
-4. **Should analytics be integrated in the initial release?**  
-   - Skip analytics for Version 1 to stay focused on core functionality.  
-   - Revisit after gathering feedback from early users.
-
-5. **Could a custom theme improve readability in the future?**  
-   - Retain Tailwind’s default palette for maximum contrast in Version 1.  
-   - Reconsider when users request additional theming options.
-
-6. **When should more real problems replace placeholders?**  
-   - Ship with the initial 11 real problems and 39 placeholders.  
-   - Add new real problems gradually as they become available.
+- No analytics or tracking is integrated in Version 1.

@@ -19,6 +19,7 @@ This document describes **version 1** of a LeetCode‑style web application for 
 
 - Backend services or authentication.
 - Real‑time collaboration or advanced code execution.
+- Analytics or tracking integration.
 
 ## User Experience
 
@@ -83,7 +84,7 @@ The remaining questions use placeholder titles and descriptions until more conte
 At this time there are no unresolved questions for the product manager.
 
 ## Answered Questions
-- **How should additional languages be prioritized?** The website only supports Python.
+- **How should additional languages be prioritized?** The website only supports Python 3 and no other languages are planned.
 - **What long-term persistence mechanism should replace localStorage?** None yet; version 1 relies solely on localStorage.
 - **Which voice command library should be used?** The built-in Web Speech API.
 - **Do we need analytics?** Not for version 1.
