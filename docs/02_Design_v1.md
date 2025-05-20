@@ -1,4 +1,4 @@
-# Design Document (Version 1 - Final)
+# Design Document (Version 1)
 
 This document expands on the Product Requirements Document and **merges all notes from the earlier “version 2” draft** so no details are lost.  
 The application is a **single-page, fully client-side LeetCode-style coding-practice site**. All state lives in the browser’s `localStorage`; no backend services are required.
