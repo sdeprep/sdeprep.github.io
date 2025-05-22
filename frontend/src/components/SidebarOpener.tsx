@@ -6,41 +6,30 @@ interface SidebarOpenerProps {
 }
 
 const SidebarOpener: React.FC<SidebarOpenerProps> = ({ parentSidebarPosition }) => {
-    const openerStyle: React.CSSProperties = {
-        position: 'absolute',
-        width: '7%', // Small rectangle width, relative to parent
-        height: '7%', // Small rectangle height, relative to parent
-        border: '1px solid black',
-        backgroundColor: 'gray',
-        borderRadius: '15%', // Keep reduced rounding
-    };
+    let positionClasses = '';
+    let transformClasses = '';
 
     switch (parentSidebarPosition) {
         case 'left':
-            openerStyle.right = '-7%'; // Position outside on the right edge
-            openerStyle.top = '50%';
-            openerStyle.transform = 'translateY(-50%)';
+            positionClasses = 'right-[-7%] top-1/2';
+            transformClasses = '-translate-y-1/2';
             break;
         case 'right':
-            openerStyle.left = '-7%'; // Position outside on the left edge
-            openerStyle.top = '50%';
-            openerStyle.transform = 'translateY(-50%)';
+            positionClasses = 'left-[-7%] top-1/2';
+            transformClasses = '-translate-y-1/2';
             break;
         case 'bottom':
-            openerStyle.top = '-7%'; // Position outside on the top edge
-            openerStyle.left = '50%';
-            openerStyle.transform = 'translateX(-50%)';
+            positionClasses = 'top-[-7%] left-1/2';
+            transformClasses = '-translate-x-1/2';
             break;
         default:
-            // Default to centered inside if no position is provided or is invalid
-            openerStyle.top = '50%';
-            openerStyle.left = '50%';
-            openerStyle.transform = 'translate(-50%, -50%)';
+            positionClasses = 'top-1/2 left-1/2';
+            transformClasses = '-translate-x-1/2 -translate-y-1/2';
     }
 
     return (
         <div
-            style={openerStyle}
+            className={`absolute w-[7%] h-[7%] border border-black bg-gray-500 rounded-[15%] ${positionClasses} ${transformClasses}`}
         ></div>
     );
 };
