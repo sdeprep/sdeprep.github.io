@@ -38,7 +38,9 @@ const SidebarOpener: React.FC<SidebarOpenerProps> = ({ parentSidebarPosition }) 
     }
 
     return (
-        <div style={openerStyle}></div>
+        <div
+            style={openerStyle}
+        ></div>
     );
 };
 
