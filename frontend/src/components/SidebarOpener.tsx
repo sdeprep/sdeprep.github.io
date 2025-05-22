@@ -29,8 +29,10 @@ const SidebarOpener: React.FC<SidebarOpenerProps> = ({ parentSidebarPosition }) 
 
     return (
         <div
-            className={`absolute w-[7%] h-[7%] border border-black bg-gray-500 rounded-[15%] ${positionClasses} ${transformClasses}`}
-        ></div>
+            className={`absolute w-8 h-8 border border-gray-500 bg-gray-300 rounded-full flex items-center justify-center overflow-hidden ${positionClasses} ${transformClasses}`}
+        >
+            <div className="w-3 h-3 bg-gray-600 rounded-full opacity-75"></div>
+        </div>
     );
 };
 
