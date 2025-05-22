@@ -1,5 +1,6 @@
 import './App.css'
 import Sidebar from './components/Sidebar';
+import CodeEditor from './components/CodeEditor';
 
 function App() {
   return (
@@ -7,6 +8,7 @@ function App() {
       <Sidebar position="left" />
       <Sidebar position="bottom" />
       <Sidebar position="right" />
+      <CodeEditor />
     </div>
   )
 }
