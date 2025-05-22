@@ -1,4 +1,14 @@
 .app {
   text-align: center;
   padding: 2rem;
+  position: relative;
+  /* Needed for z-index to work */
+  z-index: 1;
+  /* Base z-index for main content */
+}
+
+.sidebar {
+  z-index: 10;
+  /* Higher z-index to appear above main content */
+  /* Assuming sidebars have position: fixed or absolute set elsewhere */
 }
