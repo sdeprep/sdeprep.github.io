@@ -45,9 +45,17 @@ const Sidebar: React.FC<SidebarProps> = ({ position }) => {
 
     const currentPositionClass = isHidden ? styles.peekPositionClasses : (position === 'left' ? 'left-0' : (position === 'right' ? 'right-0' : (position === 'bottom' ? 'bottom-0' : '')));
 
+    const sidebarStyles: { [key: string]: React.CSSProperties } = {
+        left: { borderTopRightRadius: '12px', borderBottomRightRadius: '12px' },
+        right: { borderTopLeftRadius: '12px', borderBottomLeftRadius: '12px' },
+        bottom: { borderTopLeftRadius: '12px', borderTopRightRadius: '12px' },
+        default: {},
+    };
+
     return (
         <div
             className={`sidebar p-4 border-4 flex justify-center items-center ${styles.bgColorClass} ${styles.borderColorClass} ${styles.textColorClass} ${styles.positionClasses} ${currentPositionClass} ${transitionClasses}`}
+            style={{ ...sidebarStyles[position], zIndex: 10 }}
             onMouseEnter={() => setIsHidden(false)}
             onMouseLeave={() => setIsHidden(true)}
         >
