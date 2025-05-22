@@ -2,6 +2,7 @@ import React from 'react';
 
 interface SidebarOpenerProps {
     parentSidebarPosition?: string; // Rename prop
+    setIsParentSidebarHidden?: (isHidden: boolean) => void;
 }
 
 const SidebarOpener: React.FC<SidebarOpenerProps> = ({ parentSidebarPosition }) => {

@@ -12,7 +12,7 @@ const Sidebar: React.FC<SidebarProps> = ({ position }) => {
     let borderColorClass = '';
     let textColorClass = '';
     let positionClasses = '';
-    let transitionClasses = 'transition-all duration-300 ease-in-out';
+    const transitionClasses = 'transition-all duration-300 ease-in-out';
     let peekPositionClasses = '';
 
     switch (position) {
