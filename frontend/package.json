@@ -4,10 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "start": "vite",
+    "dev": "eslint . && eslint . --fix && vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "lint:fix": "eslint . --fix",
+    "preview": "vite preview",
+    "clean": "rm -rf dist node_modules",
+    "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.7",
