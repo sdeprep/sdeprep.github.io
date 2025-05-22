@@ -1,4 +1,4 @@
-# Frontend
+# sde
 
 This directory contains the React application built with Vite and TypeScript.
 
