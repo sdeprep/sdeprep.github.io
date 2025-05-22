@@ -12,11 +12,6 @@ npm install
 npm run dev
 ```
 
-You can also batch‑transcribe audio files using `content_generation/transcribe_audio_folder.py`:
-
-```bash
-python content_generation/transcribe_audio_folder.py
-```
 
 ## Deployment
 
