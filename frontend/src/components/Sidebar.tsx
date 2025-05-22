@@ -13,7 +13,7 @@ const Sidebar: React.FC<SidebarProps> = ({ position }) => {
     let textColorClass = '';
     let positionClasses = '';
     let transitionClasses = 'transition-all duration-300 ease-in-out';
-    let hiddenPositionClasses = '';
+    let peekPositionClasses = '';
 
     switch (position) {
         case 'left':
@@ -21,31 +21,31 @@ const Sidebar: React.FC<SidebarProps> = ({ position }) => {
             borderColorClass = 'border-blue-700';
             textColorClass = 'text-blue-800';
             positionClasses = 'fixed top-0 h-screen w-64';
-            hiddenPositionClasses = '-left-64';
+            peekPositionClasses = '-left-63'; // Shows 4px peek
             break;
         case 'bottom':
             bgColorClass = 'bg-green-200';
             borderColorClass = 'border-green-700';
             textColorClass = 'text-green-800';
             positionClasses = 'fixed left-0 right-0 h-48';
-            hiddenPositionClasses = '-bottom-48';
+            peekPositionClasses = '-bottom-47'; // Shows 4px peek
             break;
         case 'right':
             bgColorClass = 'bg-red-200';
             borderColorClass = 'border-red-700';
             textColorClass = 'text-red-800';
             positionClasses = 'fixed top-0 h-screen w-64';
-            hiddenPositionClasses = '-right-64';
+            peekPositionClasses = '-right-63'; // Shows 4px peek
             break;
         default:
             bgColorClass = 'bg-gray-200';
             borderColorClass = 'border-gray-700';
             textColorClass = 'text-gray-800';
             positionClasses = '';
-            hiddenPositionClasses = '';
+            peekPositionClasses = '';
     }
 
-    const currentPositionClass = isHidden ? hiddenPositionClasses : (position === 'left' ? 'left-0' : (position === 'right' ? 'right-0' : (position === 'bottom' ? 'bottom-0' : '')));
+    const currentPositionClass = isHidden ? peekPositionClasses : (position === 'left' ? 'left-0' : (position === 'right' ? 'right-0' : (position === 'bottom' ? 'bottom-0' : '')));
 
     return (
         <div
@@ -59,4 +59,4 @@ const Sidebar: React.FC<SidebarProps> = ({ position }) => {
     );
 };
 
-export default Sidebar; 
+export default Sidebar;
