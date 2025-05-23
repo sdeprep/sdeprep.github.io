@@ -13,6 +13,20 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
 
   if (!isOpen) return null;
 
+  // Solarized color palette
+  const solarized = {
+    base03: '#002b36', // darkest background
+    base02: '#073642', // dark background highlights
+    base01: '#586e75', // comments, secondary content  
+    base00: '#657b83', // primary content
+    base0: '#839496',  // body text
+    base1: '#93a1a1',  // optional emphasized content
+    base2: '#eee8d5',  // background highlights
+    base3: '#fdf6e3',  // lightest background
+    blue: '#268bd2',
+    violet: '#6c71c4'
+  };
+
   // Detect OS for appropriate keyboard symbols
   const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
   const cmdKey = isMac ? '⌘' : 'Ctrl';
@@ -33,8 +47,9 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
     animation: 'fadeIn 0.3s ease-out',
   };
 
+  // Use different Solarized background from code editor (base02 instead of base03/base3)
   const modalStyle: React.CSSProperties = {
-    backgroundColor: isDarkMode ? '#2d3748' : '#ffffff',
+    backgroundColor: isDarkMode ? solarized.base02 : solarized.base2,
     borderRadius: '16px',
     padding: '0',
     maxWidth: '750px',
@@ -42,21 +57,21 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
     maxHeight: '90vh',
     overflow: 'hidden',
     boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    border: `1px solid ${isDarkMode ? '#4a5568' : 'rgba(0, 0, 0, 0.1)'}`,
+    border: `1px solid ${solarized.base01}`,
     animation: 'slideIn 0.3s ease-out',
   };
 
   const headerStyle: React.CSSProperties = {
     padding: '32px 40px 24px',
-    borderBottom: `1px solid ${isDarkMode ? '#4a5568' : '#f1f5f9'}`,
-    backgroundColor: isDarkMode ? '#374151' : '#fafbfc',
+    borderBottom: `1px solid ${solarized.base01}`,
+    backgroundColor: isDarkMode ? solarized.base03 : solarized.base3,
   };
 
   const titleStyle: React.CSSProperties = {
     fontSize: '20px',
     fontWeight: '600',
     margin: '0',
-    color: isDarkMode ? '#f7fafc' : '#0f172a',
+    color: isDarkMode ? solarized.base1 : solarized.base01,
     letterSpacing: '-0.025em',
     textAlign: 'left',
   };
@@ -69,7 +84,7 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
     border: 'none',
     fontSize: '24px',
     cursor: 'pointer',
-    color: isDarkMode ? '#a0aec0' : '#6b7280',
+    color: isDarkMode ? solarized.base0 : solarized.base01,
     padding: '8px',
     borderRadius: '8px',
     transition: 'all 0.2s ease',
@@ -99,7 +114,7 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
   };
 
   const descriptionStyle: React.CSSProperties = {
-    color: isDarkMode ? '#cbd5e0' : '#374151',
+    color: isDarkMode ? solarized.base0 : solarized.base01,
     fontSize: '14px',
     fontWeight: '400',
     flex: 1,
@@ -113,16 +128,22 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
     marginLeft: '120px',
   };
 
+  // Increased key size and improved Solarized styling
   const keyStyle: React.CSSProperties = {
-    backgroundColor: isDarkMode ? '#4a5568' : '#f8fafc',
-    color: isDarkMode ? '#f7fafc' : '#1e293b',
-    padding: '6px 12px',
-    borderRadius: '6px',
-    fontSize: '12px',
+    backgroundColor: isDarkMode ? solarized.base01 : solarized.base3,
+    color: isDarkMode ? solarized.base3 : solarized.base02,
+    padding: '10px 16px', // Increased from 6px 12px
+    borderRadius: '8px', // Increased from 6px
+    fontSize: '16px', // Increased from 12px
     fontWeight: '600',
     fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
-    border: `1px solid ${isDarkMode ? '#718096' : '#e2e8f0'}`,
-    boxShadow: isDarkMode ? '0 1px 2px rgba(0, 0, 0, 0.3)' : '0 1px 2px rgba(0, 0, 0, 0.1)',
+    border: `2px solid ${isDarkMode ? solarized.base1 : solarized.base01}`, // Increased border width
+    boxShadow: isDarkMode
+      ? `0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 0 ${solarized.base0}40`
+      : `0 2px 4px rgba(0, 0, 0, 0.1), inset 0 1px 0 ${solarized.base3}`,
+    minWidth: '36px', // Minimum width for consistency
+    textAlign: 'center',
+    lineHeight: '1',
   };
 
   const shortcuts = [
