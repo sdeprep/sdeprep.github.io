@@ -170,65 +170,64 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
     }
   };
 
-  const shortcutsColumn1 = [
-    { description: 'Show shortcuts', keys: [cmdKey, '/'] },
+  const codeEditorShortcuts = [
     { description: 'Run code', keys: [cmdKey, 'Enter'] },
     { description: 'Select word', keys: [cmdKey, 'D'] },
-  ];
-
-  const shortcutsColumn2 = [
     { description: 'Move line up', keys: [altKey, '↑'] },
     { description: 'Move line down', keys: [altKey, '↓'] },
+  ];
+
+  const websiteShortcuts = [
+    { description: 'Show/Hide shortcuts', keys: [cmdKey, '/'] },
+    { description: 'Close modal', keys: ['Escape'] },
   ];
 
   return (
     <div style={overlayStyle} onClick={onClose}>
       <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
         <div style={{ ...headerStyle, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div>
-            <h2 style={{ ...titleStyle, marginBottom: '0' }}>Keyboard Shortcuts</h2>
-            <span style={{ color: isDarkMode ? solarized.base0 : solarized.base00, fontSize: '13px', marginLeft: '0' }}>
-              Shortcuts work outside code editor.
-            </span>
-          </div>
+          <h2 style={{ ...titleStyle, marginBottom: '0' }}>Keyboard Shortcuts</h2>
           <button style={closeButtonStyle} onClick={onClose}>
             ×
           </button>
         </div>
 
         <div style={contentStyle}>
-          <div style={shortcutsListStyle}>
-            {/* Column 1 */}
-            <div className="flex flex-col gap-[20px]">
-              {shortcutsColumn1.map((shortcut, index) => (
-                <div key={index} style={shortcutItemStyle}>
-                  <span style={descriptionStyle}>{shortcut.description}</span>
-                  <div style={shortcutKeysStyle}>
-                    {shortcut.keys.map((key, keyIndex) => (
-                      <span key={keyIndex} style={getDynamicKeyStyle(key)}>
-                        {key}
-                      </span>
-                    ))}
-                  </div>
+          {/* Code Editor Shortcuts */}
+          <h3 style={{ color: isDarkMode ? solarized.base0 : solarized.base00, fontSize: '16px', fontWeight: '600', marginBottom: '16px' }}>Code Editor</h3>
+          <div className="flex flex-col gap-[20px] mb-8">
+            {codeEditorShortcuts.map((shortcut, index) => (
+              <div key={index} style={shortcutItemStyle}>
+                <span style={descriptionStyle}>{shortcut.description}</span>
+                <div style={shortcutKeysStyle}>
+                  {shortcut.keys.map((key, keyIndex) => (
+                    <span key={keyIndex} style={getDynamicKeyStyle(key)}>
+                      {key}
+                    </span>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
+          </div>
 
-            {/* Column 2 */}
-            <div className="flex flex-col gap-[20px]">
-              {shortcutsColumn2.map((shortcut, index) => (
-                <div key={index} style={shortcutItemStyle}>
-                  <span style={descriptionStyle}>{shortcut.description}</span>
-                  <div style={shortcutKeysStyle}>
-                    {shortcut.keys.map((key, keyIndex) => (
-                      <span key={keyIndex} style={getDynamicKeyStyle(key)}>
-                        {key}
-                      </span>
-                    ))}
-                  </div>
+          {/* Separator Line */}
+          <hr style={{ borderTop: `1px solid ${isDarkMode ? solarized.base01 : solarized.base1}`, margin: '20px 40px' }} />
+
+          {/* Website Shortcuts */}
+          <h3 style={{ color: isDarkMode ? solarized.base0 : solarized.base00, fontSize: '16px', fontWeight: '600', marginBottom: '16px', marginTop: '24px' }}>Website</h3>
+          <div className="flex flex-col gap-[20px]">
+            {websiteShortcuts.map((shortcut, index) => (
+              <div key={index} style={shortcutItemStyle}>
+                <span style={descriptionStyle}>{shortcut.description}</span>
+                <div style={shortcutKeysStyle}>
+                  {shortcut.keys.map((key, keyIndex) => (
+                    <span key={keyIndex} style={getDynamicKeyStyle(key)}>
+                      {key}
+                    </span>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
