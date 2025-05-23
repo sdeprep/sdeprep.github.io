@@ -91,6 +91,7 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
     justifyContent: 'center',
     transition: 'all 0.2s ease',
     marginLeft: 'auto',
+    lineHeight: '1',
   };
 
   const contentStyle: React.CSSProperties = {
@@ -149,10 +150,33 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
     lineHeight: '1',
   };
 
-  const shortcuts = [
+  // Function to check if a key is a symbol
+  const isSymbolKey = (key: string) => {
+    return key === cmdKey || key === altKey || key === '↑' || key === '↓';
+  };
+
+  // Function to get dynamic key style based on whether it's a symbol
+  const getDynamicKeyStyle = (key: string): React.CSSProperties => {
+    const baseStyle = keyStyle; // Start with the base style
+    if (isSymbolKey(key)) {
+      return {
+        ...baseStyle,
+        fontSize: '20px', // Increased font size for symbols (e.g., 16 + 4 = 20)
+        lineHeight: '1', // Ensure vertical alignment for symbols
+        padding: '8px 12px', // Adjust padding slightly for larger symbols
+      };
+    } else {
+      return baseStyle;
+    }
+  };
+
+  const shortcutsColumn1 = [
     { description: 'Show shortcuts', keys: [cmdKey, '/'] },
     { description: 'Run code', keys: [cmdKey, 'Enter'] },
     { description: 'Select word', keys: [cmdKey, 'D'] },
+  ];
+
+  const shortcutsColumn2 = [
     { description: 'Move line up', keys: [altKey, '↑'] },
     { description: 'Move line down', keys: [altKey, '↓'] },
   ];
@@ -174,18 +198,37 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
 
         <div style={contentStyle}>
           <div style={shortcutsListStyle}>
-            {shortcuts.map((shortcut, index) => (
-              <div key={index} style={shortcutItemStyle}>
-                <span style={descriptionStyle}>{shortcut.description}</span>
-                <div style={shortcutKeysStyle}>
-                  {shortcut.keys.map((key, keyIndex) => (
-                    <span key={keyIndex} style={keyStyle}>
-                      {key}
-                    </span>
-                  ))}
+            {/* Column 1 */}
+            <div className="flex flex-col gap-[20px]">
+              {shortcutsColumn1.map((shortcut, index) => (
+                <div key={index} style={shortcutItemStyle}>
+                  <span style={descriptionStyle}>{shortcut.description}</span>
+                  <div style={shortcutKeysStyle}>
+                    {shortcut.keys.map((key, keyIndex) => (
+                      <span key={keyIndex} style={getDynamicKeyStyle(key)}>
+                        {key}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+
+            {/* Column 2 */}
+            <div className="flex flex-col gap-[20px]">
+              {shortcutsColumn2.map((shortcut, index) => (
+                <div key={index} style={shortcutItemStyle}>
+                  <span style={descriptionStyle}>{shortcut.description}</span>
+                  <div style={shortcutKeysStyle}>
+                    {shortcut.keys.map((key, keyIndex) => (
+                      <span key={keyIndex} style={getDynamicKeyStyle(key)}>
+                        {key}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
