@@ -1,0 +1,21 @@
+{
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.0.0"
+  },
+  "scripts": {
+    "prepare": "husky",
+    "lint": "cd frontend && npm run lint",
+    "build": "cd frontend && npm run build",
+    "type-check": "cd frontend && npm run type-check || true"
+  },
+  "lint-staged": {
+    "frontend/**/*.{js,jsx,ts,tsx}": [
+      "cd frontend && npm run lint",
+      "cd frontend && npm run type-check || true"
+    ],
+    "frontend/**/*.{js,jsx,ts,tsx,json,css,md}": [
+      "cd frontend && npm run format || true"
+    ]
+  }
+}

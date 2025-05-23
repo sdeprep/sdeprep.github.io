@@ -9,6 +9,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "type-check": "tsc --noEmit",
+    "format": "echo 'No formatter configured'",
     "preview": "vite preview",
     "clean": "rm -rf dist node_modules",
     "test": "echo \"No test specified\" && exit 0"
