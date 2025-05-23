@@ -32,6 +32,26 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
   const { isDarkMode, toggleTheme } = useTheme();
   const { questions, selectedQuestion, selectQuestion } = useQuestions();
 
+  // Solarized color palette
+  const solarized = {
+    base03: '#002b36', // darkest
+    base02: '#073642', // dark background highlights
+    base01: '#586e75', // comments, secondary content  
+    base00: '#657b83', // primary content
+    base0: '#839496',  // body text
+    base1: '#93a1a1',  // optional emphasized content
+    base2: '#eee8d5',  // background highlights
+    base3: '#fdf6e3',  // lightest background
+    blue: '#268bd2',
+    cyan: '#2aa198',
+    green: '#859900',
+    yellow: '#b58900',
+    orange: '#cb4b16',
+    red: '#dc322f',
+    magenta: '#d33682',
+    violet: '#6c71c4'
+  };
+
   const transitionClasses = 'transition-all duration-300 ease-in-out';
 
   const styles = positionStyles[position] || positionStyles.default;
@@ -57,8 +77,8 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
     width: '40px',
     height: '40px',
     borderRadius: '10px',
-    border: '2px solid #cbd5e0',
-    backgroundColor: isDarkMode ? '#4a5568' : '#f7fafc',
+    border: `2px solid ${solarized.base01}`,
+    backgroundColor: isDarkMode ? solarized.base02 : solarized.base2,
     cursor: 'pointer',
     transition: 'all 0.3s ease',
     display: 'flex',
@@ -70,11 +90,11 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
     position: 'relative',
     width: '40px',
     height: '40px',
-    backgroundColor: isDarkMode ? '#4a5568' : '#e2e8f0',
+    backgroundColor: isDarkMode ? solarized.base02 : solarized.base2,
     borderRadius: '10px',
     cursor: 'pointer',
     transition: 'background-color 0.3s ease',
-    border: '2px solid #cbd5e0',
+    border: `2px solid ${solarized.base01}`,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -83,10 +103,10 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
   const toggleKnobStyle: React.CSSProperties = {
     width: '20px',
     height: '20px',
-    backgroundColor: '#ffffff',
+    backgroundColor: isDarkMode ? solarized.base3 : solarized.base3,
     borderRadius: '50%',
     transition: 'all 0.3s ease',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+    boxShadow: `0 2px 4px ${solarized.base01}40`,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -98,12 +118,21 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
     height: '16px',
   };
 
-  const baseClasses = `sidebar p-4 border ${isDarkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`;
+  const baseClasses = `sidebar p-4 border`;
+  const solarizedBg = isDarkMode ? solarized.base03 : solarized.base3;
+  const solarizedBorder = solarized.base01;
+  const solarizedText = isDarkMode ? solarized.base0 : solarized.base00;
 
   return (
     <div
       className={`${baseClasses} ${styles.positionClasses} ${currentPositionClass} ${transitionClasses} flex flex-col`}
-      style={{ ...sidebarStyles[position], zIndex: 10 }}
+      style={{
+        ...sidebarStyles[position],
+        zIndex: 10,
+        backgroundColor: solarizedBg,
+        borderColor: solarizedBorder,
+        color: solarizedText
+      }}
       onMouseEnter={() => setIsHidden(false)}
       onMouseLeave={() => setIsHidden(true)}
     >
@@ -118,10 +147,14 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
             onClick={onShowShortcuts}
             className="hover:scale-105"
           >
-            <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke={isDarkMode ? '#e2e8f0' : '#4a5568'} strokeWidth="2">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-              <line x1="8" y1="21" x2="16" y2="21" />
-              <line x1="12" y1="17" x2="12" y2="21" />
+            <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke={solarizedText} strokeWidth="2">
+              <path d="M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" />
+              <path d="M6 10h2" />
+              <path d="M10 10h2" />
+              <path d="M14 10h2" />
+              <path d="M18 10h2" />
+              <path d="M6 14h8" />
+              <path d="M16 14h4" />
             </svg>
           </div>
 
@@ -130,12 +163,12 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
             <div style={toggleKnobStyle}>
               {isDarkMode ? (
                 // Moon icon for dark mode
-                <svg style={{ width: '14px', height: '14px' }} viewBox="0 0 24 24" fill="none" stroke="#4a5568" strokeWidth="2">
+                <svg style={{ width: '14px', height: '14px' }} viewBox="0 0 24 24" fill="none" stroke={solarizedText} strokeWidth="2">
                   <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
                 </svg>
               ) : (
                 // Sun icon for light mode
-                <svg style={{ width: '14px', height: '14px' }} viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2">
+                <svg style={{ width: '14px', height: '14px' }} viewBox="0 0 24 24" fill="none" stroke={solarizedText} strokeWidth="2">
                   <circle cx="12" cy="12" r="5" />
                   <line x1="12" y1="1" x2="12" y2="3" />
                   <line x1="12" y1="21" x2="12" y2="23" />
@@ -155,7 +188,7 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
             style={buttonStyle}
             className="hover:scale-105"
           >
-            <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke={isDarkMode ? '#e2e8f0' : '#4a5568'} strokeWidth="2">
+            <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke={solarizedText} strokeWidth="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
               <circle cx="12" cy="7" r="4" />
             </svg>
@@ -166,7 +199,7 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
       {/* Questions List for Left Sidebar */}
       {position === 'left' && (
         <div className="flex flex-col h-full">
-          <h3 className={`text-lg font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+          <h3 className={`text-lg font-semibold mb-4`} style={{ color: solarizedText }}>
             Questions
           </h3>
           <div className="flex-1 overflow-y-auto">
@@ -174,22 +207,35 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
               <div
                 key={question.id}
                 onClick={() => selectQuestion(question)}
-                className={`p-3 mb-2 rounded-lg cursor-pointer transition-all duration-200 ${selectedQuestion?.id === question.id
-                  ? isDarkMode
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-blue-100 text-blue-900 border border-blue-300'
-                  : isDarkMode
-                    ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'
-                  }`}
+                className={`p-3 mb-2 rounded-lg cursor-pointer transition-all duration-200`}
+                style={{
+                  backgroundColor: selectedQuestion?.id === question.id
+                    ? solarized.blue
+                    : (isDarkMode ? solarized.base02 : solarized.base2),
+                  color: selectedQuestion?.id === question.id
+                    ? solarized.base3
+                    : solarizedText,
+                  border: `1px solid ${solarized.base01}`,
+                }}
+                onMouseEnter={(e) => {
+                  if (selectedQuestion?.id !== question.id) {
+                    e.currentTarget.style.backgroundColor = isDarkMode ? solarized.base01 : solarized.base1;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (selectedQuestion?.id !== question.id) {
+                    e.currentTarget.style.backgroundColor = isDarkMode ? solarized.base02 : solarized.base2;
+                  }
+                }}
               >
                 <div className="font-medium text-sm">{question.title}</div>
-                <div className={`text-xs mt-1 ${question.difficulty === 'Easy'
-                  ? 'text-green-500'
-                  : question.difficulty === 'Medium'
-                    ? 'text-yellow-500'
-                    : 'text-red-500'
-                  }`}>
+                <div className={`text-xs mt-1`} style={{
+                  color: question.difficulty === 'Easy'
+                    ? solarized.green
+                    : question.difficulty === 'Medium'
+                      ? solarized.yellow
+                      : solarized.red
+                }}>
                   {question.difficulty}
                 </div>
               </div>
@@ -201,7 +247,7 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
       {/* Content for other sidebars */}
       {position === 'bottom' && (
         <div className="flex flex-col justify-center items-center h-full">
-          <div className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <div className={`text-sm font-medium`} style={{ color: solarizedText }}>
             AI Interaction
           </div>
         </div>
@@ -209,7 +255,7 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
 
       {position === 'right' && (
         <div className="flex flex-col justify-center items-center flex-1">
-          <div className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <div className={`text-sm font-medium`} style={{ color: solarizedText }}>
             Settings
           </div>
         </div>
