@@ -179,7 +179,6 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
 
   const websiteShortcuts = [
     { description: 'Show/Hide shortcuts', keys: [cmdKey, '/'] },
-    { description: 'Close modal', keys: ['Escape'] },
   ];
 
   return (
@@ -193,8 +192,12 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
         </div>
 
         <div style={contentStyle}>
-          {/* Code Editor Shortcuts */}
-          <h3 style={{ color: isDarkMode ? solarized.base0 : solarized.base00, fontSize: '16px', fontWeight: '600', marginBottom: '16px' }}>Code Editor</h3>
+          {/* Code Editor Section with Split Lines */}
+          <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>
+            <hr style={{ flex: 1, borderTop: `1px solid ${isDarkMode ? solarized.base01 : solarized.base1}`, margin: '0 20px 0 0' }} />
+            <h3 style={{ color: isDarkMode ? solarized.base0 : solarized.base00, fontSize: '16px', fontWeight: '600', margin: '0', whiteSpace: 'nowrap' }}>Code Editor</h3>
+            <hr style={{ flex: 1, borderTop: `1px solid ${isDarkMode ? solarized.base01 : solarized.base1}`, margin: '0 0 0 20px' }} />
+          </div>
           <div className="flex flex-col gap-[20px] mb-8">
             {codeEditorShortcuts.map((shortcut, index) => (
               <div key={index} style={shortcutItemStyle}>
@@ -210,11 +213,12 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
             ))}
           </div>
 
-          {/* Separator Line */}
-          <hr style={{ borderTop: `1px solid ${isDarkMode ? solarized.base01 : solarized.base1}`, margin: '20px 40px' }} />
-
-          {/* Website Shortcuts */}
-          <h3 style={{ color: isDarkMode ? solarized.base0 : solarized.base00, fontSize: '16px', fontWeight: '600', marginBottom: '16px', marginTop: '24px' }}>Website</h3>
+          {/* Website Section with Split Lines */}
+          <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>
+            <hr style={{ flex: 1, borderTop: `1px solid ${isDarkMode ? solarized.base01 : solarized.base1}`, margin: '0 20px 0 0' }} />
+            <h3 style={{ color: isDarkMode ? solarized.base0 : solarized.base00, fontSize: '16px', fontWeight: '600', margin: '0', whiteSpace: 'nowrap' }}>Website</h3>
+            <hr style={{ flex: 1, borderTop: `1px solid ${isDarkMode ? solarized.base01 : solarized.base1}`, margin: '0 0 0 20px' }} />
+          </div>
           <div className="flex flex-col gap-[20px]">
             {websiteShortcuts.map((shortcut, index) => (
               <div key={index} style={shortcutItemStyle}>
