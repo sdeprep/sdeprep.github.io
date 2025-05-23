@@ -36,12 +36,20 @@ function AppContent() {
     setShowShortcuts(true);
   };
 
-  // Detect OS for keyboard shortcuts
-  const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+  // Detect OS for appropriate keyboard symbols and display
+  const [osName, setOsName] = useState('Detecting OS...');
 
   useEffect(() => {
+    const userAgent = navigator.userAgent;
+    if (userAgent.indexOf("Mac") != -1) setOsName("macOS");
+    else if (userAgent.indexOf("Win") != -1) setOsName("Windows");
+    else if (userAgent.indexOf("Linux") != -1) setOsName("Linux");
+    else if (userAgent.indexOf("Android") != -1) setOsName("Android");
+    else if (userAgent.indexOf("like Mac") != -1) setOsName("iOS"); // iPad, iPhone
+    else setOsName("Unknown OS");
+
     const handleKeyDown = (event: KeyboardEvent) => {
-      const cmdOrCtrl = isMac ? event.metaKey : event.ctrlKey;
+      const cmdOrCtrl = userAgent.indexOf("Mac") != -1 ? event.metaKey : event.ctrlKey;
 
       // Cmd/Ctrl + / - Toggle keyboard shortcuts
       if (cmdOrCtrl && event.key === '/') {
@@ -126,7 +134,7 @@ function AppContent() {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isMac, showShortcuts]);
+  }, [showShortcuts]); // Added showShortcuts dependency
 
   // Apply Solarized background to entire application
   const appStyle: React.CSSProperties = {
@@ -136,11 +144,21 @@ function AppContent() {
     transition: 'background-color 0.3s ease, color 0.3s ease',
   };
 
+  const osHeadingStyle: React.CSSProperties = {
+    textAlign: 'center',
+    fontSize: '24px',
+    margin: '20px auto 10px auto', // Adjust margins to fit above editor
+    color: isDarkMode ? solarized.base0 : solarized.base00,
+  };
+
   return (
     <div className={`app`} style={appStyle}>
       <Sidebar position="left" />
       {/* <Sidebar position="bottom" /> */}
       <Sidebar position="right" onShowShortcuts={handleShowShortcuts} />
+
+      {/* OS Heading */}
+      <h1 style={osHeadingStyle}>{osName}</h1>
 
       {/* Main code editor */}
       <CodeEditor />
