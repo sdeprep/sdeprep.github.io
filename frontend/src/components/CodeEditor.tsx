@@ -144,12 +144,11 @@ print("Hello, World!")`,
         ? `0 8px 32px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 ${solarized.base01}40`
         : `0 8px 32px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 ${solarized.base3}`,
     backgroundColor: isDarkMode ? solarized.base02 : solarized.base2,
-    transition: 'box-shadow 0.3s ease, transform 0.3s ease',
-    transform: isListening ? 'translateY(-2px)' : 'translateY(0)',
+    transition: 'box-shadow 0.5s ease',
     animation: isListening
       ? isSpeaking
-        ? 'waveformPulse 0.8s ease-in-out infinite'
-        : 'gentleListening 2s ease-in-out infinite'
+        ? 'waveformShadows 1.2s ease-in-out infinite'
+        : 'gentleListeningShadows 3s ease-in-out infinite'
       : 'none',
   };
 
@@ -180,41 +179,33 @@ print("Hello, World!")`,
 
       {/* Advanced shadow animation styles */}
       <style>{`
-        @keyframes gentleListening {
+        @keyframes gentleListeningShadows {
           0% { 
             box-shadow: 0 8px 32px rgba(203, 75, 22, 0.4), 0 4px 16px rgba(203, 75, 22, 0.2), 0 0 20px rgba(203, 75, 22, 0.3);
-            transform: translateY(-2px);
           }
           50% { 
-            box-shadow: 0 8px 32px rgba(203, 75, 22, 0.5), 0 4px 16px rgba(203, 75, 22, 0.3), 0 0 30px rgba(203, 75, 22, 0.4);
-            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(203, 75, 22, 0.5), 0 6px 20px rgba(203, 75, 22, 0.3), 0 0 35px rgba(203, 75, 22, 0.4);
           }
           100% { 
             box-shadow: 0 8px 32px rgba(203, 75, 22, 0.4), 0 4px 16px rgba(203, 75, 22, 0.2), 0 0 20px rgba(203, 75, 22, 0.3);
-            transform: translateY(-2px);
           }
         }
         
-        @keyframes waveformPulse {
+        @keyframes waveformShadows {
           0% { 
             box-shadow: 0 8px 32px rgba(203, 75, 22, 0.6), 0 4px 16px rgba(203, 75, 22, 0.4), 0 0 40px rgba(203, 75, 22, 0.5), 0 0 80px rgba(203, 75, 22, 0.2);
-            transform: translateY(-2px) scale(1);
           }
           25% { 
-            box-shadow: 0 12px 40px rgba(203, 75, 22, 0.8), 0 6px 20px rgba(203, 75, 22, 0.6), 0 0 60px rgba(203, 75, 22, 0.7), 0 0 120px rgba(203, 75, 22, 0.3);
-            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 16px 48px rgba(203, 75, 22, 0.8), 0 8px 24px rgba(203, 75, 22, 0.6), 0 0 70px rgba(203, 75, 22, 0.7), 0 0 140px rgba(203, 75, 22, 0.3);
           }
           50% { 
-            box-shadow: 0 16px 48px rgba(203, 75, 22, 0.9), 0 8px 24px rgba(203, 75, 22, 0.7), 0 0 80px rgba(203, 75, 22, 0.8), 0 0 160px rgba(203, 75, 22, 0.4);
-            transform: translateY(-5px) scale(1.015);
+            box-shadow: 0 24px 64px rgba(203, 75, 22, 0.9), 0 12px 32px rgba(203, 75, 22, 0.7), 0 0 100px rgba(203, 75, 22, 0.8), 0 0 200px rgba(203, 75, 22, 0.4);
           }
           75% { 
-            box-shadow: 0 12px 40px rgba(203, 75, 22, 0.8), 0 6px 20px rgba(203, 75, 22, 0.6), 0 0 60px rgba(203, 75, 22, 0.7), 0 0 120px rgba(203, 75, 22, 0.3);
-            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 16px 48px rgba(203, 75, 22, 0.8), 0 8px 24px rgba(203, 75, 22, 0.6), 0 0 70px rgba(203, 75, 22, 0.7), 0 0 140px rgba(203, 75, 22, 0.3);
           }
           100% { 
             box-shadow: 0 8px 32px rgba(203, 75, 22, 0.6), 0 4px 16px rgba(203, 75, 22, 0.4), 0 0 40px rgba(203, 75, 22, 0.5), 0 0 80px rgba(203, 75, 22, 0.2);
-            transform: translateY(-2px) scale(1);
           }
         }
       `}</style>

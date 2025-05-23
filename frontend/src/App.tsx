@@ -234,7 +234,7 @@ function AppContent() {
       {transcriptToast.isVisible && (
         <div data-toast style={{
           position: 'fixed',
-          bottom: '100px',
+          bottom: '140px',
           left: '50%',
           transform: 'translateX(-50%)',
           zIndex: 90,
