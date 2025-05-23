@@ -146,6 +146,50 @@ a:focus-visible {
   cursor: text !important;
 }
 
+/* Fast tooltip display - reduce delay from default 500ms to 200ms */
+[title] {
+  position: relative;
+}
+
+[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2d3748;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 9999;
+  pointer-events: none;
+  animation: tooltipFadeIn 0.2s ease-out;
+  animation-delay: 0.2s;
+  /* Reduced from browser default of ~500ms */
+  animation-fill-mode: both;
+  opacity: 0;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* For dark theme tooltip styling */
+.dark-theme [title]:hover::after {
+  background-color: #4a5568;
+  color: #f7fafc;
+}
+
 /* Respect user's reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   .app {
@@ -159,5 +203,11 @@ a:focus-visible {
   a:hover {
     transform: none;
     transition: none;
+  }
+
+  [title]:hover::after {
+    animation: none;
+    animation-delay: 0;
+    opacity: 1;
   }
 }

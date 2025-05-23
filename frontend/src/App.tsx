@@ -43,11 +43,11 @@ function AppContent() {
   const showTranscriptToast = (message: string, duration?: number) => {
     setTranscriptToast({ message, isVisible: true });
 
-    // Auto-hide "Listening..." message after a longer duration
-    if (message === 'Listening...' && duration !== 0) {
+    // Auto-hide message after duration, unless duration is 0 (persistent)
+    if (duration !== 0) {
       setTimeout(() => {
         hideTranscriptToast();
-      }, duration || 4000); // 4 seconds instead of default shorter time
+      }, duration || 3000); // Default 3 seconds
     }
   };
 
@@ -78,7 +78,7 @@ function AppContent() {
       recognitionInstance.onstart = () => {
         console.log('Speech recognition started - isAwakeMode:', isAwakeMode);
         if (isAwakeMode) {
-          showTranscriptToast('Listening...');
+          showTranscriptToast('Listening...', 0); // Duration 0 means don't auto-hide
         }
       };
 
@@ -101,6 +101,11 @@ function AppContent() {
           // Awake mode: show all transcripts and handle commands
           if (!isPaused && currentTranscript) {
             showTranscriptToast(currentTranscript);
+            // Hide the "Listening..." message once actual transcription starts
+            if (currentTranscript !== 'Listening...' && transcriptToast.message === 'Listening...') {
+              hideTranscriptToast();
+              setTimeout(() => showTranscriptToast(currentTranscript), 100);
+            }
           }
 
           // Check for commands in awake mode
@@ -112,7 +117,7 @@ function AppContent() {
                 showTranscriptToast('Paused - say "resume listening" or "let\'s go" to continue');
               } else if (command.action === 'resume' || command.action === 'wake_up') {
                 setIsPaused(false);
-                showTranscriptToast('Listening...');
+                showTranscriptToast('Listening...', 0); // Duration 0 means don't auto-hide
               }
             }
           }
@@ -122,7 +127,6 @@ function AppContent() {
             finalTranscript.toLowerCase().includes('go to sleep')) {
             setIsAwakeMode(false); // Return to sleep mode
             setIsPaused(false);
-            showToast('😴 Returning to sleep mode - say "let\'s go" to wake up');
             recognitionInstance.stop();
           }
         } else {
@@ -132,7 +136,7 @@ function AppContent() {
             if (wakeWord && wakeWord.action === 'wake_up') {
               console.log('Wake word detected:', wakeWord.phrase);
               setIsAwakeMode(true);
-              showTranscriptToast('Listening...');
+              showTranscriptToast('Listening...', 0); // Duration 0 means don't auto-hide
             }
           }
         }
@@ -278,7 +282,6 @@ function AppContent() {
     // Return to sleep mode when manually stopping
     if (isAwakeMode) {
       setIsAwakeMode(false);
-      showToast('😴 Returning to sleep mode - say "let\'s go" to wake up');
     }
   };
 
