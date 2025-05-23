@@ -1,0 +1,98 @@
+{
+    "colors": {
+        "editor.background": "#fdf6e3",
+        "editor.foreground": "#657b83",
+        "editorLineNumber.foreground": "#93a1a1",
+        "editorLineNumber.activeForeground": "#586e75",
+        "editor.selectionBackground": "#eee8d5",
+        "editor.selectionHighlightBackground": "#eee8d5",
+        "editor.inactiveSelectionBackground": "#eee8d5",
+        "editor.wordHighlightBackground": "#eee8d5",
+        "editor.wordHighlightStrongBackground": "#eee8d5",
+        "editor.findMatchBackground": "#b58900",
+        "editor.findMatchHighlightBackground": "#eee8d5",
+        "editor.findRangeHighlightBackground": "#eee8d5",
+        "editor.hoverHighlightBackground": "#eee8d5",
+        "editor.lineHighlightBackground": "#eee8d5",
+        "editorCursor.foreground": "#657b83",
+        "editorWhitespace.foreground": "#93a1a1",
+        "editorIndentGuide.background": "#93a1a1",
+        "editorIndentGuide.activeBackground": "#657b83",
+        "editorRuler.foreground": "#93a1a1"
+    },
+    "rules": [
+        {
+            "token": "",
+            "foreground": "#657b83"
+        },
+        {
+            "token": "comment",
+            "foreground": "#93a1a1",
+            "fontStyle": "italic"
+        },
+        {
+            "token": "keyword",
+            "foreground": "#859900"
+        },
+        {
+            "token": "keyword.control",
+            "foreground": "#859900"
+        },
+        {
+            "token": "keyword.operator",
+            "foreground": "#859900"
+        },
+        {
+            "token": "string",
+            "foreground": "#2aa198"
+        },
+        {
+            "token": "number",
+            "foreground": "#d33682"
+        },
+        {
+            "token": "identifier",
+            "foreground": "#268bd2"
+        },
+        {
+            "token": "type",
+            "foreground": "#b58900"
+        },
+        {
+            "token": "constant",
+            "foreground": "#cb4b16"
+        },
+        {
+            "token": "function",
+            "foreground": "#268bd2"
+        },
+        {
+            "token": "variable",
+            "foreground": "#657b83"
+        },
+        {
+            "token": "regexp",
+            "foreground": "#dc322f"
+        },
+        {
+            "token": "attribute.name",
+            "foreground": "#586e75"
+        },
+        {
+            "token": "attribute.value",
+            "foreground": "#2aa198"
+        },
+        {
+            "token": "meta.tag",
+            "foreground": "#586e75"
+        },
+        {
+            "token": "tag",
+            "foreground": "#268bd2"
+        },
+        {
+            "token": "delimiter",
+            "foreground": "#586e75"
+        }
+    ]
+}

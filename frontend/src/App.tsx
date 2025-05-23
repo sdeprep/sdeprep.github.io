@@ -12,6 +12,18 @@ function AppContent() {
   const [toast, setToast] = useState({ message: '', isVisible: false });
   const { isDarkMode } = useTheme();
 
+  // Solarized color palette
+  const solarized = {
+    base03: '#002b36', // darkest background
+    base02: '#073642', // dark background highlights
+    base01: '#586e75', // comments, secondary content  
+    base00: '#657b83', // primary content
+    base0: '#839496',  // body text
+    base1: '#93a1a1',  // optional emphasized content
+    base2: '#eee8d5',  // background highlights
+    base3: '#fdf6e3',  // lightest background
+  };
+
   const showToast = (message: string) => {
     setToast({ message, isVisible: true });
   };
@@ -116,16 +128,22 @@ function AppContent() {
     };
   }, [isMac, showShortcuts]);
 
+  // Apply Solarized background to entire application
+  const appStyle: React.CSSProperties = {
+    backgroundColor: isDarkMode ? solarized.base03 : solarized.base3,
+    color: isDarkMode ? solarized.base0 : solarized.base00,
+    minHeight: '100vh',
+    transition: 'background-color 0.3s ease, color 0.3s ease',
+  };
+
   return (
-    <div className={`app ${isDarkMode ? 'dark-theme' : 'light-theme'}`}>
+    <div className={`app`} style={appStyle}>
       <Sidebar position="left" />
       {/* <Sidebar position="bottom" /> */}
       <Sidebar position="right" onShowShortcuts={handleShowShortcuts} />
 
       {/* Main code editor */}
-      <CodeEditor
-        theme={isDarkMode ? 'vs-dark' : 'light'}
-      />
+      <CodeEditor />
 
       {/* Keyboard shortcuts modal */}
       <KeyboardShortcutsModal isOpen={showShortcuts} onClose={() => setShowShortcuts(false)} />

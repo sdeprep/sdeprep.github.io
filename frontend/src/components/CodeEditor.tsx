@@ -1,6 +1,9 @@
 import Editor from '@monaco-editor/react';
 import { useState, useEffect } from 'react';
 import { useQuestions } from '../contexts/QuestionContext';
+import { useTheme } from '../contexts/ThemeContext';
+import solarizedDark from '../themes/solarized-dark.json';
+import solarizedLight from '../themes/solarized-light.json';
 
 interface CodeEditorProps {
   defaultValue?: string;
@@ -8,7 +11,6 @@ interface CodeEditorProps {
   defaultPath?: string;
   language?: string;
   path?: string;
-  theme?: 'light' | 'vs-dark';
   line?: number;
   loading?: React.ReactNode;
   options?: object;
@@ -32,7 +34,6 @@ print("Hello, World!")`,
   defaultPath,
   language,
   path,
-  theme = 'vs-dark',
   line,
   loading,
   options = {
@@ -66,6 +67,7 @@ print("Hello, World!")`,
   },
 }) => {
   const { selectedQuestion } = useQuestions();
+  const { isDarkMode } = useTheme();
   const [code, setCode] = useState(defaultValue);
 
   // Load code from localStorage when question changes
@@ -89,15 +91,48 @@ print("Hello, World!")`,
     }
   };
 
+  // Handle Monaco editor setup
+  const handleEditorBeforeMount = (monaco: any) => {
+    // Define Solarized themes
+    monaco.editor.defineTheme('solarized-dark', {
+      base: 'vs-dark',
+      inherit: true,
+      ...solarizedDark
+    });
+
+    monaco.editor.defineTheme('solarized-light', {
+      base: 'vs',
+      inherit: true,
+      ...solarizedLight
+    });
+
+    // Call user's beforeMount if provided
+    if (beforeMount) {
+      beforeMount(monaco);
+    }
+  };
+
+  // Get theme name based on current mode
+  const themeToUse = isDarkMode ? 'solarized-dark' : 'solarized-light';
+
+  // Solarized border color
+  const solarizedBorder = '#586e75'; // base01 - comments/secondary content
+
+  // Update container style with Solarized border
+  const updatedContainerStyle = {
+    ...containerStyle,
+    borderColor: solarizedBorder,
+  };
+
   return (
-    <div className="code-editor-container" style={containerStyle}>
+    <div className="code-editor-container" style={updatedContainerStyle}>
       <Editor
         value={code}
         defaultLanguage={defaultLanguage}
         defaultPath={defaultPath}
         language={language}
         path={path}
-        theme={theme}
+        theme={themeToUse}
         line={line}
         loading={loading}
         options={options}
@@ -108,7 +143,7 @@ print("Hello, World!")`,
         width={width}
         className={className}
         wrapperProps={wrapperProps}
-        beforeMount={beforeMount}
+        beforeMount={handleEditorBeforeMount}
         onMount={onMount}
         onChange={handleCodeChange}
         onValidate={onValidate}
