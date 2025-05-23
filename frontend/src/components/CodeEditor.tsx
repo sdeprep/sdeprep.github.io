@@ -61,7 +61,6 @@ print("Hello, World!")`,
     height: '85vh',
     width: '80%',
     margin: '3vh auto 8vh auto',
-    border: '1px solid #cccccc',
     borderRadius: '12px',
     overflow: 'hidden',
   },
@@ -115,13 +114,28 @@ print("Hello, World!")`,
   // Get theme name based on current mode
   const themeToUse = isDarkMode ? 'solarized-dark' : 'solarized-light';
 
-  // Solarized border color
-  const solarizedBorder = '#586e75'; // base01 - comments/secondary content
+  // Solarized colors for styling
+  const solarized = {
+    base03: '#002b36',
+    base02: '#073642',
+    base01: '#586e75',
+    base00: '#657b83',
+    base0: '#839496',
+    base1: '#93a1a1',
+    base2: '#eee8d5',
+    base3: '#fdf6e3',
+  };
 
-  // Update container style with Solarized border
+  // Update container style with improved visual hierarchy
   const updatedContainerStyle = {
     ...containerStyle,
-    borderColor: solarizedBorder,
+    borderColor: isDarkMode ? solarized.base01 : solarized.base1,
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    boxShadow: isDarkMode
+      ? `0 8px 32px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 ${solarized.base01}40`
+      : `0 8px 32px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 ${solarized.base3}`,
+    backgroundColor: isDarkMode ? solarized.base02 : solarized.base2,
   };
 
   return (
