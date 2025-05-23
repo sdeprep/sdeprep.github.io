@@ -163,6 +163,9 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
 
         <div style={headerStyle}>
           <h2 style={titleStyle}>Keyboard Shortcuts</h2>
+          <p style={{ color: isDarkMode ? solarized.base0 : solarized.base00, fontSize: '13px', marginTop: '8px' }}>
+            Note: These shortcuts work best when you are not actively typing in the code editor.
+          </p>
         </div>
 
         <div style={contentStyle}>
