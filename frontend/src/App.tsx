@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import CodeEditor from './components/CodeEditor';
 import KeyboardShortcutsModal from './components/KeyboardShortcutsModal';
 import Toast from './components/Toast';
+import TranscriptionToast from './components/TranscriptionToast';
 import WaterRipples from './components/WaterRipples';
 import BackgroundInteractionGuide from './components/BackgroundInteractionGuide';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
@@ -15,7 +16,8 @@ function AppContent() {
   const [toast, setToast] = useState({ message: '', isVisible: false });
   const [isListening, setIsListening] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0); // Direct audio level value
-  const [transcriptToast, setTranscriptToast] = useState({ message: '', isVisible: false });
+  const [transcriptionMessage, setTranscriptionMessage] = useState('');
+  const [showTranscription, setShowTranscription] = useState(false);
   const [isAwakeMode, setIsAwakeMode] = useState(false); // Sleep mode by default
   const [isPaused, setIsPaused] = useState(false); // Pause state for awake mode
   const { isDarkMode, visualEffectsEnabled } = useTheme();
@@ -41,10 +43,12 @@ function AppContent() {
   };
 
   const showTranscriptToast = (message: string, duration?: number) => {
-    setTranscriptToast({ message, isVisible: true });
+    setTranscriptionMessage(message);
+    setShowTranscription(true);
 
-    // Auto-hide message after duration, unless duration is 0 (persistent)
-    if (duration !== 0) {
+    // For persistent messages (duration 0), don't auto-hide
+    // For other messages, auto-hide after duration only if not showing "Listening..."
+    if (duration !== 0 && message !== 'Listening...') {
       setTimeout(() => {
         hideTranscriptToast();
       }, duration || 3000); // Default 3 seconds
@@ -52,7 +56,7 @@ function AppContent() {
   };
 
   const hideTranscriptToast = () => {
-    setTranscriptToast({ message: '', isVisible: false });
+    setShowTranscription(false);
   };
 
   const handleShowShortcuts = () => {
@@ -100,12 +104,8 @@ function AppContent() {
         if (isAwakeMode) {
           // Awake mode: show all transcripts and handle commands
           if (!isPaused && currentTranscript) {
-            showTranscriptToast(currentTranscript);
-            // Hide the "Listening..." message once actual transcription starts
-            if (currentTranscript !== 'Listening...' && transcriptToast.message === 'Listening...') {
-              hideTranscriptToast();
-              setTimeout(() => showTranscriptToast(currentTranscript), 100);
-            }
+            // Simply update the message - the component handles smooth transitions
+            setTranscriptionMessage(currentTranscript);
           }
 
           // Check for commands in awake mode
@@ -144,17 +144,21 @@ function AppContent() {
 
       recognitionInstance.onerror = (event: any) => {
         console.error('Speech recognition error:', event.error);
-        hideTranscriptToast();
 
-        // Don't show error toast for "aborted" errors as they're expected during mode transitions
-        if (event.error !== 'aborted') {
+        // Only hide transcription toast for serious errors, not for expected ones like "aborted"
+        if (event.error !== 'aborted' && event.error !== 'no-speech') {
+          hideTranscriptToast();
           showToast(`❌ Speech recognition error: ${event.error}`);
         }
       };
 
       recognitionInstance.onend = () => {
         console.log('Speech recognition ended');
-        hideTranscriptToast();
+
+        // Only hide transcription toast if we're not in awake mode
+        if (!isAwakeMode) {
+          hideTranscriptToast();
+        }
 
         // In sleep mode, automatically restart recognition
         if (!isAwakeMode && isListening) {
@@ -403,31 +407,12 @@ function AppContent() {
       {/* Main code editor */}
       <CodeEditor isListening={isListening} audioLevel={audioLevel} />
 
-      {/* Transcript Toast (positioned over code editor) */}
-      {transcriptToast.isVisible && (
-        <div data-toast style={{
-          position: 'fixed',
-          bottom: '140px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 90,
-          backgroundColor: isDarkMode ? solarized.base02 : solarized.base2,
-          color: isDarkMode ? solarized.base0 : solarized.base00,
-          padding: '16px 24px',
-          borderRadius: '12px',
-          border: 'none',
-          boxShadow: isDarkMode
-            ? '0 12px 24px rgba(0, 0, 0, 0.25), 0 6px 12px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1)'
-            : '0 12px 24px rgba(0, 0, 0, 0.12), 0 6px 12px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.05)',
-          maxWidth: '400px',
-          textAlign: 'center',
-          animation: isListening ? 'pulse 1.5s infinite' : 'none',
-          fontSize: '14px',
-          fontWeight: '500',
-        }}>
-          {transcriptToast.message}
-        </div>
-      )}
+      {/* Transcription Toast (positioned over code editor) */}
+      <TranscriptionToast
+        isVisible={showTranscription}
+        message={transcriptionMessage}
+        isListening={isListening}
+      />
 
       {/* Keyboard shortcuts modal */}
       <KeyboardShortcutsModal isOpen={showShortcuts} onClose={() => setShowShortcuts(false)} data-modal />
@@ -435,13 +420,7 @@ function AppContent() {
       {/* Toast notifications */}
       <Toast message={toast.message} isVisible={toast.isVisible} onClose={hideToast} data-toast />
 
-      <style>{`
-        @keyframes pulse {
-          0% { opacity: 1; transform: translateX(-50%) scale(1); }
-          50% { opacity: 0.8; transform: translateX(-50%) scale(1.02); }
-          100% { opacity: 1; transform: translateX(-50%) scale(1); }
-        }
-      `}</style>
+
     </div>
   );
 }
