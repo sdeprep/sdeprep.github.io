@@ -11,6 +11,7 @@ function AppContent() {
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [toast, setToast] = useState({ message: '', isVisible: false });
   const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const [transcriptToast, setTranscriptToast] = useState({ message: '', isVisible: false });
   const { isDarkMode } = useTheme();
 
@@ -60,20 +61,31 @@ function AppContent() {
       recognitionInstance.onstart = () => {
         console.log('Speech recognition started');
         setIsListening(true);
+        setIsSpeaking(false);
         showTranscriptToast('🎤 Listening...');
       };
 
       recognitionInstance.onresult = (event: any) => {
         let finalTranscript = '';
         let interimTranscript = '';
+        let hasNewSpeech = false;
 
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const transcript = event.results[i][0].transcript;
           if (event.results[i].isFinal) {
             finalTranscript += transcript;
+            hasNewSpeech = true;
           } else {
             interimTranscript += transcript;
+            hasNewSpeech = true;
           }
+        }
+
+        // Update speaking state based on speech activity
+        if (hasNewSpeech && (finalTranscript || interimTranscript)) {
+          setIsSpeaking(true);
+          // Reset speaking state after a short delay if no new speech
+          setTimeout(() => setIsSpeaking(false), 1000);
         }
 
         const currentTranscript = finalTranscript || interimTranscript;
@@ -91,6 +103,7 @@ function AppContent() {
       recognitionInstance.onerror = (event: any) => {
         console.error('Speech recognition error:', event.error);
         setIsListening(false);
+        setIsSpeaking(false);
         hideTranscriptToast();
         showToast(`❌ Speech recognition error: ${event.error}`);
       };
@@ -98,6 +111,7 @@ function AppContent() {
       recognitionInstance.onend = () => {
         console.log('Speech recognition ended');
         setIsListening(false);
+        setIsSpeaking(false);
         hideTranscriptToast();
       };
 
@@ -205,7 +219,6 @@ function AppContent() {
     color: isDarkMode ? solarized.base0 : solarized.base00,
     minHeight: '100vh',
     transition: 'background-color 0.3s ease, color 0.3s ease',
-    cursor: isListening ? 'wait' : 'default',
   };
 
   return (
@@ -215,7 +228,7 @@ function AppContent() {
       <Sidebar position="right" onShowShortcuts={handleShowShortcuts} data-sidebar />
 
       {/* Main code editor */}
-      <CodeEditor isListening={isListening} />
+      <CodeEditor isListening={isListening} isSpeaking={isSpeaking} />
 
       {/* Transcript Toast (positioned over code editor) */}
       {transcriptToast.isVisible && (

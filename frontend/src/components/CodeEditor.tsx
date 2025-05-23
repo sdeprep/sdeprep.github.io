@@ -26,6 +26,7 @@ interface CodeEditorProps {
   onValidate?: (markers: unknown[]) => void;
   containerStyle?: React.CSSProperties;
   isListening?: boolean;
+  isSpeaking?: boolean;
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
@@ -66,6 +67,7 @@ print("Hello, World!")`,
     overflow: 'hidden',
   },
   isListening = false,
+  isSpeaking = false,
 }) => {
   const { selectedQuestion } = useQuestions();
   const { isDarkMode } = useTheme();
@@ -128,20 +130,27 @@ print("Hello, World!")`,
     base3: '#fdf6e3',
   };
 
-  // Update container style with improved visual hierarchy and orange shadow when listening
+  // Update container style with improved visual hierarchy and dynamic shadow animations
   const updatedContainerStyle = {
     ...containerStyle,
     borderColor: isDarkMode ? solarized.base01 : solarized.base1,
     borderWidth: '1px',
     borderStyle: 'solid',
     boxShadow: isListening
-      ? '0 8px 32px rgba(203, 75, 22, 0.4), 0 4px 16px rgba(203, 75, 22, 0.2), 0 0 20px rgba(203, 75, 22, 0.3)'
+      ? isSpeaking
+        ? '0 8px 32px rgba(203, 75, 22, 0.6), 0 4px 16px rgba(203, 75, 22, 0.4), 0 0 40px rgba(203, 75, 22, 0.5), 0 0 80px rgba(203, 75, 22, 0.2)'
+        : '0 8px 32px rgba(203, 75, 22, 0.4), 0 4px 16px rgba(203, 75, 22, 0.2), 0 0 20px rgba(203, 75, 22, 0.3)'
       : isDarkMode
         ? `0 8px 32px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 ${solarized.base01}40`
         : `0 8px 32px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 ${solarized.base3}`,
     backgroundColor: isDarkMode ? solarized.base02 : solarized.base2,
     transition: 'box-shadow 0.3s ease, transform 0.3s ease',
     transform: isListening ? 'translateY(-2px)' : 'translateY(0)',
+    animation: isListening
+      ? isSpeaking
+        ? 'waveformPulse 0.8s ease-in-out infinite'
+        : 'gentleListening 2s ease-in-out infinite'
+      : 'none',
   };
 
   return (
@@ -168,6 +177,47 @@ print("Hello, World!")`,
         onChange={handleCodeChange}
         onValidate={onValidate}
       />
+
+      {/* Advanced shadow animation styles */}
+      <style>{`
+        @keyframes gentleListening {
+          0% { 
+            box-shadow: 0 8px 32px rgba(203, 75, 22, 0.4), 0 4px 16px rgba(203, 75, 22, 0.2), 0 0 20px rgba(203, 75, 22, 0.3);
+            transform: translateY(-2px);
+          }
+          50% { 
+            box-shadow: 0 8px 32px rgba(203, 75, 22, 0.5), 0 4px 16px rgba(203, 75, 22, 0.3), 0 0 30px rgba(203, 75, 22, 0.4);
+            transform: translateY(-3px);
+          }
+          100% { 
+            box-shadow: 0 8px 32px rgba(203, 75, 22, 0.4), 0 4px 16px rgba(203, 75, 22, 0.2), 0 0 20px rgba(203, 75, 22, 0.3);
+            transform: translateY(-2px);
+          }
+        }
+        
+        @keyframes waveformPulse {
+          0% { 
+            box-shadow: 0 8px 32px rgba(203, 75, 22, 0.6), 0 4px 16px rgba(203, 75, 22, 0.4), 0 0 40px rgba(203, 75, 22, 0.5), 0 0 80px rgba(203, 75, 22, 0.2);
+            transform: translateY(-2px) scale(1);
+          }
+          25% { 
+            box-shadow: 0 12px 40px rgba(203, 75, 22, 0.8), 0 6px 20px rgba(203, 75, 22, 0.6), 0 0 60px rgba(203, 75, 22, 0.7), 0 0 120px rgba(203, 75, 22, 0.3);
+            transform: translateY(-4px) scale(1.01);
+          }
+          50% { 
+            box-shadow: 0 16px 48px rgba(203, 75, 22, 0.9), 0 8px 24px rgba(203, 75, 22, 0.7), 0 0 80px rgba(203, 75, 22, 0.8), 0 0 160px rgba(203, 75, 22, 0.4);
+            transform: translateY(-5px) scale(1.015);
+          }
+          75% { 
+            box-shadow: 0 12px 40px rgba(203, 75, 22, 0.8), 0 6px 20px rgba(203, 75, 22, 0.6), 0 0 60px rgba(203, 75, 22, 0.7), 0 0 120px rgba(203, 75, 22, 0.3);
+            transform: translateY(-4px) scale(1.01);
+          }
+          100% { 
+            box-shadow: 0 8px 32px rgba(203, 75, 22, 0.6), 0 4px 16px rgba(203, 75, 22, 0.4), 0 0 40px rgba(203, 75, 22, 0.5), 0 0 80px rgba(203, 75, 22, 0.2);
+            transform: translateY(-2px) scale(1);
+          }
+        }
+      `}</style>
     </div>
   );
 };
