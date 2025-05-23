@@ -5,13 +5,12 @@ import CodeEditor from './components/CodeEditor';
 import KeyboardShortcutsModal from './components/KeyboardShortcutsModal';
 import Toast from './components/Toast';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
-import { QuestionProvider, useQuestions } from './contexts/QuestionContext';
+import { QuestionProvider } from './contexts/QuestionContext';
 
 function AppContent() {
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [toast, setToast] = useState({ message: '', isVisible: false });
   const { isDarkMode } = useTheme();
-  const { selectedQuestion } = useQuestions();
 
   const showToast = (message: string) => {
     setToast({ message, isVisible: true });
