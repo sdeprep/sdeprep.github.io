@@ -52,6 +52,44 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
     violet: '#6c71c4'
   };
 
+  const handleiCloudSync = () => {
+    const themeState = localStorage.getItem('theme');
+    const selectedQuestionId = localStorage.getItem('selectedQuestionId');
+
+    // Get all saved code snippets
+    const savedCode: { [key: string]: string } = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('code_')) {
+        const questionId = key.replace('code_', '');
+        const code = localStorage.getItem(key);
+        if (code !== null) {
+          savedCode[questionId] = code;
+        }
+      }
+    }
+
+    const syncData = {
+      theme: themeState,
+      selectedQuestionId: selectedQuestionId,
+      savedCode: savedCode,
+    };
+
+    const json = JSON.stringify(syncData, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'sde_sync_data.json'; // Suggested filename
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    alert('Please manually move the downloaded file to your desired iCloud Drive folder (e.g., iCloud Drive/SDE).');
+  };
+
   const transitionClasses = 'transition-all duration-300 ease-in-out';
 
   const styles = positionStyles[position] || positionStyles.default;
@@ -158,17 +196,29 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
             </svg>
           </div>
 
-          {/* Theme Toggle - Center */}
+          {/* iCloud Sync Button - Center */}
+          <div
+            style={buttonStyle}
+            onClick={handleiCloudSync}
+            className="hover:scale-105"
+          >
+            <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke={solarizedText} strokeWidth="2">
+              <path d="M10 20l-6-6-4 4V4l4-4 6 6" />
+              <path d="M10 20l6-6 4 4V4l-4-4-6 6" />
+            </svg>
+          </div>
+
+          {/* Theme Toggle - Right Center */}
           <div style={toggleSwitchStyle} onClick={toggleTheme} className="hover:scale-105">
             <div style={toggleKnobStyle}>
               {isDarkMode ? (
                 // Moon icon for dark mode
-                <svg style={{ width: '14px', height: '14px' }} viewBox="0 0 24 24" fill="none" stroke={solarizedText} strokeWidth="2">
+                <svg style={{ width: '14px', height: '14px' }} viewBox="0 0 24 24" fill="none" stroke="#4a5568" strokeWidth="2">
                   <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
                 </svg>
               ) : (
                 // Sun icon for light mode
-                <svg style={{ width: '14px', height: '14px' }} viewBox="0 0 24 24" fill="none" stroke={solarizedText} strokeWidth="2">
+                <svg style={{ width: '14px', height: '14px' }} viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2">
                   <circle cx="12" cy="12" r="5" />
                   <line x1="12" y1="1" x2="12" y2="3" />
                   <line x1="12" y1="21" x2="12" y2="23" />
