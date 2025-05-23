@@ -370,9 +370,7 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
 
       {position === 'right' && (
         <div className="flex flex-col justify-center items-center flex-1">
-          <div className={`text-sm font-medium`} style={{ color: solarizedText }}>
-            Settings
-          </div>
+          {/* Remove the Settings text */}
         </div>
       )}
     </div>

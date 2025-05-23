@@ -25,6 +25,7 @@ interface CodeEditorProps {
   onMount?: (editor: unknown, monaco: unknown) => void;
   onValidate?: (markers: unknown[]) => void;
   containerStyle?: React.CSSProperties;
+  isListening?: boolean;
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
@@ -64,6 +65,7 @@ print("Hello, World!")`,
     borderRadius: '12px',
     overflow: 'hidden',
   },
+  isListening = false,
 }) => {
   const { selectedQuestion } = useQuestions();
   const { isDarkMode } = useTheme();
@@ -126,16 +128,20 @@ print("Hello, World!")`,
     base3: '#fdf6e3',
   };
 
-  // Update container style with improved visual hierarchy
+  // Update container style with improved visual hierarchy and orange shadow when listening
   const updatedContainerStyle = {
     ...containerStyle,
     borderColor: isDarkMode ? solarized.base01 : solarized.base1,
     borderWidth: '1px',
     borderStyle: 'solid',
-    boxShadow: isDarkMode
-      ? `0 8px 32px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 ${solarized.base01}40`
-      : `0 8px 32px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 ${solarized.base3}`,
+    boxShadow: isListening
+      ? '0 8px 32px rgba(203, 75, 22, 0.4), 0 4px 16px rgba(203, 75, 22, 0.2), 0 0 20px rgba(203, 75, 22, 0.3)'
+      : isDarkMode
+        ? `0 8px 32px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 ${solarized.base01}40`
+        : `0 8px 32px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 ${solarized.base3}`,
     backgroundColor: isDarkMode ? solarized.base02 : solarized.base2,
+    transition: 'box-shadow 0.3s ease, transform 0.3s ease',
+    transform: isListening ? 'translateY(-2px)' : 'translateY(0)',
   };
 
   return (
