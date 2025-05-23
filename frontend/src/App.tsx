@@ -6,27 +6,13 @@ import ProfileButton from './components/ProfileButton';
 import KeyboardShortcutsModal from './components/KeyboardShortcutsModal';
 import Toast from './components/Toast';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import { QuestionProvider, useQuestions } from './contexts/QuestionContext';
 
 function AppContent() {
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [toast, setToast] = useState({ message: '', isVisible: false });
   const { isDarkMode } = useTheme();
-
-  const originalDefaultValue = `"""
-Given an array of integers nums and an integer target,
-return indices of the two numbers such that they add up to target.
-You may assume that each input would have exactly one solution,
-and you may not use the same element twice.
-You can return the answer in any order.
-
-Example 1:
-Input: nums = [2,7,11,15], target = 9
-Output: [0,1]
-Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
-"""
-
-def twoSum(nums, target):
-    pass # Your code here`;
+  const { selectedQuestion } = useQuestions();
 
   const showToast = (message: string) => {
     setToast({ message, isVisible: true });
@@ -130,7 +116,7 @@ def twoSum(nums, target):
 
   return (
     <div className={`app ${isDarkMode ? 'dark-theme' : 'light-theme'}`}>
-      {/* <Sidebar position="left" /> */}
+      <Sidebar position="left" />
       {/* <Sidebar position="bottom" /> */}
       <Sidebar position="right" />
 
@@ -139,8 +125,9 @@ def twoSum(nums, target):
 
       {/* Main code editor */}
       <CodeEditor
-        defaultValue={originalDefaultValue}
+        defaultValue={selectedQuestion?.code || ''}
         theme={isDarkMode ? 'vs-dark' : 'light'}
+        key={selectedQuestion?.id} // Force re-render when question changes
       />
 
       {/* Keyboard shortcuts modal */}
@@ -155,7 +142,9 @@ def twoSum(nums, target):
 function App() {
   return (
     <ThemeProvider>
-      <AppContent />
+      <QuestionProvider>
+        <AppContent />
+      </QuestionProvider>
     </ThemeProvider>
   );
 }
