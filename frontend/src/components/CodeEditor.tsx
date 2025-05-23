@@ -138,8 +138,12 @@ print("Hello, World!")`,
     borderStyle: 'solid',
     boxShadow: isListening
       ? isSpeaking
-        ? '0 8px 32px rgba(203, 75, 22, 0.6), 0 4px 16px rgba(203, 75, 22, 0.4), 0 0 40px rgba(203, 75, 22, 0.5), 0 0 80px rgba(203, 75, 22, 0.2)'
-        : '0 8px 32px rgba(203, 75, 22, 0.4), 0 4px 16px rgba(203, 75, 22, 0.2), 0 0 20px rgba(203, 75, 22, 0.3)'
+        ? isDarkMode
+          ? '0 8px 32px rgba(38, 139, 210, 0.6), 0 4px 16px rgba(38, 139, 210, 0.4), 0 0 40px rgba(38, 139, 210, 0.5), 0 0 80px rgba(38, 139, 210, 0.2)'
+          : '0 8px 32px rgba(181, 137, 0, 0.6), 0 4px 16px rgba(181, 137, 0, 0.4), 0 0 40px rgba(181, 137, 0, 0.5), 0 0 80px rgba(181, 137, 0, 0.2)'
+        : isDarkMode
+          ? '0 8px 32px rgba(38, 139, 210, 0.4), 0 4px 16px rgba(38, 139, 210, 0.2), 0 0 20px rgba(38, 139, 210, 0.3)'
+          : '0 8px 32px rgba(181, 137, 0, 0.4), 0 4px 16px rgba(181, 137, 0, 0.2), 0 0 20px rgba(181, 137, 0, 0.3)'
       : isDarkMode
         ? `0 8px 32px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 ${solarized.base01}40`
         : `0 8px 32px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 ${solarized.base3}`,
@@ -181,31 +185,55 @@ print("Hello, World!")`,
       <style>{`
         @keyframes gentleListeningShadows {
           0% { 
-            box-shadow: 0 8px 32px rgba(203, 75, 22, 0.4), 0 4px 16px rgba(203, 75, 22, 0.2), 0 0 20px rgba(203, 75, 22, 0.3);
+            box-shadow: ${isDarkMode
+          ? '0 8px 32px rgba(38, 139, 210, 0.4), 0 4px 16px rgba(38, 139, 210, 0.2), 0 0 20px rgba(38, 139, 210, 0.3)'
+          : '0 8px 32px rgba(181, 137, 0, 0.4), 0 4px 16px rgba(181, 137, 0, 0.2), 0 0 20px rgba(181, 137, 0, 0.3)'
+        };
           }
           50% { 
-            box-shadow: 0 12px 40px rgba(203, 75, 22, 0.5), 0 6px 20px rgba(203, 75, 22, 0.3), 0 0 35px rgba(203, 75, 22, 0.4);
+            box-shadow: ${isDarkMode
+          ? '0 12px 40px rgba(38, 139, 210, 0.5), 0 6px 20px rgba(38, 139, 210, 0.3), 0 0 35px rgba(38, 139, 210, 0.4)'
+          : '0 12px 40px rgba(181, 137, 0, 0.5), 0 6px 20px rgba(181, 137, 0, 0.3), 0 0 35px rgba(181, 137, 0, 0.4)'
+        };
           }
           100% { 
-            box-shadow: 0 8px 32px rgba(203, 75, 22, 0.4), 0 4px 16px rgba(203, 75, 22, 0.2), 0 0 20px rgba(203, 75, 22, 0.3);
+            box-shadow: ${isDarkMode
+          ? '0 8px 32px rgba(38, 139, 210, 0.4), 0 4px 16px rgba(38, 139, 210, 0.2), 0 0 20px rgba(38, 139, 210, 0.3)'
+          : '0 8px 32px rgba(181, 137, 0, 0.4), 0 4px 16px rgba(181, 137, 0, 0.2), 0 0 20px rgba(181, 137, 0, 0.3)'
+        };
           }
         }
         
         @keyframes waveformShadows {
           0% { 
-            box-shadow: 0 8px 32px rgba(203, 75, 22, 0.6), 0 4px 16px rgba(203, 75, 22, 0.4), 0 0 40px rgba(203, 75, 22, 0.5), 0 0 80px rgba(203, 75, 22, 0.2);
+            box-shadow: ${isDarkMode
+          ? '0 8px 32px rgba(38, 139, 210, 0.6), 0 4px 16px rgba(38, 139, 210, 0.4), 0 0 40px rgba(38, 139, 210, 0.5), 0 0 80px rgba(38, 139, 210, 0.2)'
+          : '0 8px 32px rgba(181, 137, 0, 0.6), 0 4px 16px rgba(181, 137, 0, 0.4), 0 0 40px rgba(181, 137, 0, 0.5), 0 0 80px rgba(181, 137, 0, 0.2)'
+        };
           }
           25% { 
-            box-shadow: 0 16px 48px rgba(203, 75, 22, 0.8), 0 8px 24px rgba(203, 75, 22, 0.6), 0 0 70px rgba(203, 75, 22, 0.7), 0 0 140px rgba(203, 75, 22, 0.3);
+            box-shadow: ${isDarkMode
+          ? '0 16px 48px rgba(38, 139, 210, 0.8), 0 8px 24px rgba(38, 139, 210, 0.6), 0 0 70px rgba(38, 139, 210, 0.7), 0 0 140px rgba(38, 139, 210, 0.3)'
+          : '0 16px 48px rgba(181, 137, 0, 0.8), 0 8px 24px rgba(181, 137, 0, 0.6), 0 0 70px rgba(181, 137, 0, 0.7), 0 0 140px rgba(181, 137, 0, 0.3)'
+        };
           }
           50% { 
-            box-shadow: 0 24px 64px rgba(203, 75, 22, 0.9), 0 12px 32px rgba(203, 75, 22, 0.7), 0 0 100px rgba(203, 75, 22, 0.8), 0 0 200px rgba(203, 75, 22, 0.4);
+            box-shadow: ${isDarkMode
+          ? '0 24px 64px rgba(38, 139, 210, 0.9), 0 12px 32px rgba(38, 139, 210, 0.7), 0 0 100px rgba(38, 139, 210, 0.8), 0 0 200px rgba(38, 139, 210, 0.4)'
+          : '0 24px 64px rgba(181, 137, 0, 0.9), 0 12px 32px rgba(181, 137, 0, 0.7), 0 0 100px rgba(181, 137, 0, 0.8), 0 0 200px rgba(181, 137, 0, 0.4)'
+        };
           }
           75% { 
-            box-shadow: 0 16px 48px rgba(203, 75, 22, 0.8), 0 8px 24px rgba(203, 75, 22, 0.6), 0 0 70px rgba(203, 75, 22, 0.7), 0 0 140px rgba(203, 75, 22, 0.3);
+            box-shadow: ${isDarkMode
+          ? '0 16px 48px rgba(38, 139, 210, 0.8), 0 8px 24px rgba(38, 139, 210, 0.6), 0 0 70px rgba(38, 139, 210, 0.7), 0 0 140px rgba(38, 139, 210, 0.3)'
+          : '0 16px 48px rgba(181, 137, 0, 0.8), 0 8px 24px rgba(181, 137, 0, 0.6), 0 0 70px rgba(181, 137, 0, 0.7), 0 0 140px rgba(181, 137, 0, 0.3)'
+        };
           }
           100% { 
-            box-shadow: 0 8px 32px rgba(203, 75, 22, 0.6), 0 4px 16px rgba(203, 75, 22, 0.4), 0 0 40px rgba(203, 75, 22, 0.5), 0 0 80px rgba(203, 75, 22, 0.2);
+            box-shadow: ${isDarkMode
+          ? '0 8px 32px rgba(38, 139, 210, 0.6), 0 4px 16px rgba(38, 139, 210, 0.4), 0 0 40px rgba(38, 139, 210, 0.5), 0 0 80px rgba(38, 139, 210, 0.2)'
+          : '0 8px 32px rgba(181, 137, 0, 0.6), 0 4px 16px rgba(181, 137, 0, 0.4), 0 0 40px rgba(181, 137, 0, 0.5), 0 0 80px rgba(181, 137, 0, 0.2)'
+        };
           }
         }
       `}</style>
