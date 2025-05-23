@@ -87,7 +87,7 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    alert('Please manually move the downloaded file to your desired iCloud Drive folder (e.g., iCloud Drive/SDE).');
+    alert('Please download the file to your desired iCloud drive folder (preferred location would be iCloud drive / SDE).');
   };
 
   const transitionClasses = 'transition-all duration-300 ease-in-out';
