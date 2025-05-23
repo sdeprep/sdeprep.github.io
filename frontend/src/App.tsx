@@ -62,7 +62,7 @@ function AppContent() {
         console.log('Speech recognition started');
         setIsListening(true);
         setIsSpeaking(false);
-        showTranscriptToast('🎤 Listening...');
+        showTranscriptToast('Listening...');
       };
 
       recognitionInstance.onresult = (event: any) => {
@@ -240,13 +240,17 @@ function AppContent() {
           zIndex: 90,
           backgroundColor: isDarkMode ? solarized.base02 : solarized.base2,
           color: isDarkMode ? solarized.base0 : solarized.base00,
-          padding: '12px 20px',
-          borderRadius: '8px',
-          border: `1px solid ${isDarkMode ? solarized.base01 : solarized.base1}`,
-          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          padding: '16px 24px',
+          borderRadius: '12px',
+          border: 'none',
+          boxShadow: isDarkMode
+            ? '0 12px 24px rgba(0, 0, 0, 0.25), 0 6px 12px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1)'
+            : '0 12px 24px rgba(0, 0, 0, 0.12), 0 6px 12px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.05)',
           maxWidth: '400px',
           textAlign: 'center',
           animation: isListening ? 'pulse 1.5s infinite' : 'none',
+          fontSize: '14px',
+          fontWeight: '500',
         }}>
           {transcriptToast.message}
         </div>

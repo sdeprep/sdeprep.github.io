@@ -25,7 +25,7 @@ const Toast: React.FC<ToastProps> = ({ message, isVisible, onClose, duration = 3
     position: 'fixed',
     bottom: '24px',
     right: '24px',
-    backgroundColor: '#374151',
+    backgroundColor: '#4b5563',
     color: 'white',
     padding: '12px 20px',
     borderRadius: '8px',

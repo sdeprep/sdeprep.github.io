@@ -77,23 +77,7 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
     textAlign: 'left',
   };
 
-  const closeButtonStyle: React.CSSProperties = {
-    background: 'none',
-    border: `1px solid ${isDarkMode ? solarized.base01 : solarized.base1}`,
-    borderRadius: '50%',
-    fontSize: '24px',
-    cursor: 'pointer',
-    color: isDarkMode ? solarized.base0 : solarized.base00,
-    padding: '0',
-    width: '30px',
-    height: '30px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transition: 'all 0.2s ease',
-    marginLeft: 'auto',
-    lineHeight: '1',
-  };
+
 
   const contentStyle: React.CSSProperties = {
     padding: '32px 40px 40px',
@@ -101,12 +85,7 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
     overflow: 'auto',
   };
 
-  const shortcutsListStyle: React.CSSProperties = {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '20px',
-    columnGap: '32px',
-  };
+
 
   const shortcutItemStyle: React.CSSProperties = {
     display: 'flex',
