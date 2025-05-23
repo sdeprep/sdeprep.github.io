@@ -1,9 +1,10 @@
 import './App.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Sidebar from './components/Sidebar';
 import CodeEditor from './components/CodeEditor';
 import KeyboardShortcutsModal from './components/KeyboardShortcutsModal';
 import Toast from './components/Toast';
+import WaterRipples from './components/WaterRipples';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { QuestionProvider } from './contexts/QuestionContext';
 
@@ -11,7 +12,7 @@ function AppContent() {
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [toast, setToast] = useState({ message: '', isVisible: false });
   const [isListening, setIsListening] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [audioLevel, setAudioLevel] = useState(0); // Direct audio level value
   const [transcriptToast, setTranscriptToast] = useState({ message: '', isVisible: false });
   const { isDarkMode } = useTheme();
 
@@ -47,7 +48,13 @@ function AppContent() {
     setShowShortcuts(true);
   };
 
-  // Initialize Speech Recognition
+  // Audio level capture using Web Audio API
+  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const isListeningRef = useRef(false);
+
+  // Speech Recognition for transcript toast
   const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
   const [recognition, setRecognition] = useState<any>(null);
 
@@ -60,32 +67,20 @@ function AppContent() {
 
       recognitionInstance.onstart = () => {
         console.log('Speech recognition started');
-        setIsListening(true);
-        setIsSpeaking(false);
         showTranscriptToast('Listening...');
       };
 
       recognitionInstance.onresult = (event: any) => {
         let finalTranscript = '';
         let interimTranscript = '';
-        let hasNewSpeech = false;
 
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const transcript = event.results[i][0].transcript;
           if (event.results[i].isFinal) {
             finalTranscript += transcript;
-            hasNewSpeech = true;
           } else {
             interimTranscript += transcript;
-            hasNewSpeech = true;
           }
-        }
-
-        // Update speaking state based on speech activity
-        if (hasNewSpeech && (finalTranscript || interimTranscript)) {
-          setIsSpeaking(true);
-          // Reset speaking state after a short delay if no new speech
-          setTimeout(() => setIsSpeaking(false), 1000);
         }
 
         const currentTranscript = finalTranscript || interimTranscript;
@@ -102,16 +97,12 @@ function AppContent() {
 
       recognitionInstance.onerror = (event: any) => {
         console.error('Speech recognition error:', event.error);
-        setIsListening(false);
-        setIsSpeaking(false);
         hideTranscriptToast();
         showToast(`❌ Speech recognition error: ${event.error}`);
       };
 
       recognitionInstance.onend = () => {
         console.log('Speech recognition ended');
-        setIsListening(false);
-        setIsSpeaking(false);
         hideTranscriptToast();
       };
 
@@ -121,21 +112,102 @@ function AppContent() {
     }
   }, []);
 
-  const toggleMicrophone = () => {
-    if (!recognition) {
-      showToast('❌ Speech recognition not supported in this browser');
-      return;
+  const startAudioCapture = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const context = new AudioContext();
+      const source = context.createMediaStreamSource(mediaStream);
+      const analyserNode = context.createAnalyser();
+
+      // Configure for better audio level detection
+      analyserNode.fftSize = 1024; // Increased for better resolution
+      analyserNode.smoothingTimeConstant = 0.8; // Smoother transitions
+      analyserNode.minDecibels = -90;
+      analyserNode.maxDecibels = -10;
+
+      source.connect(analyserNode);
+
+      setStream(mediaStream);
+      setAudioContext(context);
+      setAnalyser(analyserNode);
+      setIsListening(true);
+      isListeningRef.current = true;
+
+      // Start speech recognition alongside audio level monitoring
+      if (recognition) {
+        try {
+          recognition.start();
+        } catch (error) {
+          console.error('Error starting speech recognition:', error);
+        }
+      }
+
+      // Start monitoring audio levels - Using time domain data for waveform-like visualization
+      const dataArray = new Uint8Array(analyserNode.fftSize);
+      const updateAudioLevel = () => {
+        if (analyserNode && isListeningRef.current) {
+          // Get time domain data (actual waveform amplitude)
+          analyserNode.getByteTimeDomainData(dataArray);
+
+          // Calculate RMS (Root Mean Square) for more accurate amplitude
+          let sum = 0;
+          for (let i = 0; i < dataArray.length; i++) {
+            const sample = (dataArray[i] - 128) / 128; // Convert to -1 to 1 range
+            sum += sample * sample;
+          }
+          const rms = Math.sqrt(sum / dataArray.length);
+
+          // Apply sensitivity scaling and smoothing
+          const sensitivity = 3; // Increased sensitivity
+          const normalizedLevel = Math.min(rms * sensitivity, 1);
+
+          // Apply logarithmic scaling for more natural response
+          const logLevel = normalizedLevel > 0 ? Math.log10(normalizedLevel * 9 + 1) : 0;
+
+          // Debug logging (remove in production)
+          if (logLevel > 0.1) {
+            console.log(`Audio Level: ${logLevel.toFixed(3)}, RMS: ${rms.toFixed(3)}, Normalized: ${normalizedLevel.toFixed(3)}`);
+          }
+
+          setAudioLevel(logLevel);
+
+          requestAnimationFrame(updateAudioLevel);
+        }
+      };
+      updateAudioLevel();
+
+    } catch (error) {
+      console.error('Error accessing microphone:', error);
+      showToast('❌ Error accessing microphone');
+    }
+  };
+
+  const stopAudioCapture = () => {
+    isListeningRef.current = false;
+
+    // Stop speech recognition
+    if (recognition) {
+      recognition.stop();
     }
 
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+    }
+    if (audioContext) {
+      audioContext.close();
+    }
+    setStream(null);
+    setAudioContext(null);
+    setAnalyser(null);
+    setIsListening(false);
+    setAudioLevel(0);
+  };
+
+  const toggleMicrophone = () => {
     if (isListening) {
-      recognition.stop();
+      stopAudioCapture();
     } else {
-      try {
-        recognition.start();
-      } catch (error) {
-        console.error('Error starting speech recognition:', error);
-        showToast('❌ Error starting speech recognition');
-      }
+      startAudioCapture();
     }
   };
 
@@ -223,12 +295,15 @@ function AppContent() {
 
   return (
     <div className={`app`} style={appStyle} onClick={handleAppClick}>
+      {/* Water ripple effects layer */}
+      <WaterRipples audioLevel={audioLevel} isListening={isListening} />
+
       <Sidebar position="left" data-sidebar />
       {/* <Sidebar position="bottom" /> */}
       <Sidebar position="right" onShowShortcuts={handleShowShortcuts} data-sidebar />
 
       {/* Main code editor */}
-      <CodeEditor isListening={isListening} isSpeaking={isSpeaking} />
+      <CodeEditor isListening={isListening} audioLevel={audioLevel} />
 
       {/* Transcript Toast (positioned over code editor) */}
       {transcriptToast.isVisible && (
