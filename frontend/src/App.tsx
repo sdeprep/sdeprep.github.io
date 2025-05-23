@@ -5,6 +5,7 @@ import CodeEditor from './components/CodeEditor';
 import KeyboardShortcutsModal from './components/KeyboardShortcutsModal';
 import Toast from './components/Toast';
 import WaterRipples from './components/WaterRipples';
+import BackgroundInteractionGuide from './components/BackgroundInteractionGuide';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { QuestionProvider } from './contexts/QuestionContext';
 
@@ -295,6 +296,9 @@ function AppContent() {
 
   return (
     <div className={`app`} style={appStyle} onClick={handleAppClick}>
+      {/* Background interaction guide layer */}
+      <BackgroundInteractionGuide audioLevel={audioLevel} isListening={isListening} />
+
       {/* Water ripple effects layer */}
       <WaterRipples audioLevel={audioLevel} isListening={isListening} />
 

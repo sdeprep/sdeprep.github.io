@@ -12,6 +12,20 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* CSS Variables for Solarized Colors */
+:root {
+  --solarized-blue: 38, 139, 210;
+  --solarized-yellow: 181, 137, 0;
+  --solarized-base03: 0, 43, 54;
+  --solarized-base02: 7, 54, 66;
+  --solarized-base01: 88, 110, 117;
+  --solarized-base00: 101, 123, 131;
+  --solarized-base0: 131, 148, 150;
+  --solarized-base1: 147, 161, 161;
+  --solarized-base2: 238, 232, 213;
+  --solarized-base3: 253, 246, 227;
+}
+
 /* App container */
 .app {
   min-height: 100vh;
@@ -91,10 +105,59 @@ body.dark-theme {
   /* Assuming sidebars have position: fixed or absolute set elsewhere */
 }
 
+/* Subtle interaction enhancements */
+.app {
+  cursor: crosshair;
+}
+
+/* Enhanced hover states for interactive elements */
+button:hover,
+[role="button"]:hover,
+a:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+button:active,
+[role="button"]:active,
+a:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Focus states for accessibility */
+button:focus-visible,
+[role="button"]:focus-visible,
+a:focus-visible {
+  outline: 2px solid rgb(var(--solarized-blue));
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(var(--solarized-blue), 0.2);
+}
+
+/* Sidebar interaction hints */
+[data-sidebar]:hover {
+  background-color: rgba(var(--solarized-base03), 0.03);
+  transition: background-color 0.3s ease;
+}
+
+/* Non-interactive areas have default cursor */
+.monaco-editor {
+  cursor: text !important;
+}
+
 /* Respect user's reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   .app {
     animation: none;
     background-position: 0 0, 100px 100px, 200px 200px !important;
+    cursor: default;
+  }
+
+  button:hover,
+  [role="button"]:hover,
+  a:hover {
+    transform: none;
+    transition: none;
   }
 }
