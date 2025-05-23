@@ -8,21 +8,31 @@ interface SidebarProps {
 const positionStyles: { [key: string]: { [key: string]: string } } = {
   left: {
     bgColorClass: 'bg-blue-200',
-    borderColorClass: 'border-blue-800',
+    borderColorClass: 'border-blue-700',
     textColorClass: 'text-blue-800',
-    positionClasses: 'left-0 top-0 h-screen w-24',
+    positionClasses: 'fixed top-0 h-screen w-64',
+    peekPositionClasses: '-left-63', // Shows 4px peek
   },
   bottom: {
     bgColorClass: 'bg-green-200',
-    borderColorClass: 'border-green-800',
+    borderColorClass: 'border-green-700',
     textColorClass: 'text-green-800',
-    positionClasses: 'bottom-0 left-0 right-0 h-24',
+    positionClasses: 'fixed left-0 right-0 h-48',
+    peekPositionClasses: '-bottom-47', // Shows 4px peek
   },
   right: {
     bgColorClass: 'bg-red-200',
-    borderColorClass: 'border-red-800',
+    borderColorClass: 'border-red-700',
     textColorClass: 'text-red-800',
-    positionClasses: 'right-0 top-0 h-screen w-24',
+    positionClasses: 'fixed top-0 h-screen w-64',
+    peekPositionClasses: '-right-63', // Shows 4px peek
+  },
+  default: {
+    bgColorClass: 'bg-gray-200',
+    borderColorClass: 'border-gray-700',
+    textColorClass: 'text-gray-800',
+    positionClasses: '',
+    peekPositionClasses: '',
   },
 };
 
@@ -31,31 +41,39 @@ const Sidebar: React.FC<SidebarProps> = ({ position }) => {
 
   const transitionClasses = 'transition-all duration-300 ease-in-out';
 
-  const currentPositionClass = isHidden ? 'opacity-0' : 'opacity-100';
+  const styles = positionStyles[position] || positionStyles.default;
 
-  const styles = positionStyles[position] || {
-    bgColorClass: 'bg-gray-200',
-    borderColorClass: 'border-gray-800',
-    textColorClass: 'text-gray-800',
-    positionClasses: '',
-  };
+  const currentPositionClass = isHidden
+    ? styles.peekPositionClasses
+    : position === 'left'
+      ? 'left-0'
+      : position === 'right'
+        ? 'right-0'
+        : position === 'bottom'
+          ? 'bottom-0'
+          : '';
 
-  const sidebarStyles: { [key: string]: { [key: string]: string } } = {
-    left: { position: 'fixed', left: '0', top: '0', height: '100vh', width: '6rem' },
-    bottom: { position: 'fixed', bottom: '0', left: '0', right: '0', height: '6rem' },
-    right: { position: 'fixed', right: '0', top: '0', height: '100vh', width: '6rem' },
+  const sidebarStyles: { [key: string]: React.CSSProperties } = {
+    left: { borderTopRightRadius: '12px', borderBottomRightRadius: '12px' },
+    right: { borderTopLeftRadius: '12px', borderBottomLeftRadius: '12px' },
+    bottom: { borderTopLeftRadius: '12px', borderTopRightRadius: '12px' },
     default: {},
   };
 
   return (
     <div
-      className={`sidebar p-4 border-4 flex justify-center items-center ${styles.bgColorClass} ${styles.borderColorClass} ${styles.textColorClass} ${styles.positionClasses} ${currentPositionClass} ${transitionClasses}`}
+      className={`sidebar p-4 border-4 flex flex-col justify-center items-center ${styles.bgColorClass} ${styles.borderColorClass} ${styles.textColorClass} ${styles.positionClasses} ${currentPositionClass} ${transitionClasses}`}
       style={{ ...sidebarStyles[position], zIndex: 10 }}
       onMouseEnter={() => setIsHidden(false)}
       onMouseLeave={() => setIsHidden(true)}
     >
       <SidebarOpener parentSidebarPosition={position} setIsParentSidebarHidden={setIsHidden} />
-      {position} sidebar
+
+      <div style={{ fontSize: '14px', fontWeight: '500', color: '#6c757d' }}>
+        {position === 'left' && '❓ Questions'}
+        {position === 'bottom' && '🤖 AI Interaction'}
+        {position === 'right' && '⚙️ Settings'}
+      </div>
     </div>
   );
 };

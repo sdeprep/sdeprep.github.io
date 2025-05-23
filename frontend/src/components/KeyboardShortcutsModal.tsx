@@ -34,9 +34,9 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
     backgroundColor: '#ffffff',
     borderRadius: '16px',
     padding: '0',
-    maxWidth: '600px',
+    maxWidth: '750px',
     width: '90%',
-    maxHeight: '85vh',
+    maxHeight: '90vh',
     overflow: 'hidden',
     boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
     border: '1px solid rgba(0, 0, 0, 0.1)',
@@ -50,7 +50,7 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
   };
 
   const titleStyle: React.CSSProperties = {
-    fontSize: '22px',
+    fontSize: '20px',
     fontWeight: '600',
     margin: '0',
     color: '#0f172a',
@@ -93,7 +93,7 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
     display: 'flex',
     gap: '8px',
     alignItems: 'center',
-    marginLeft: '60px',
+    marginLeft: '120px',
   };
 
   const keyStyle: React.CSSProperties = {
