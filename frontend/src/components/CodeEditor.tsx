@@ -146,9 +146,6 @@ print("Hello, World!")`,
       }
 
       // Audio-responsive shadow - waveform-like expansion
-      const baseIntensity = 0.1;
-      const audioIntensity = audioLevel * 0.4; // Scale audio level
-      const totalIntensity = baseIntensity + audioIntensity;
 
       // Dynamic shadow calculations based on audio level
       const shadowDistance1 = 4 + (audioLevel * 16); // 4px to 20px

@@ -1,0 +1,34 @@
+{
+    "wakeWords": [
+        {
+            "phrase": "let's go",
+            "action": "wake_up",
+            "description": "Activates the main speech recognition mode"
+        },
+        {
+            "phrase": "pause listening",
+            "action": "pause",
+            "description": "Pauses speech recognition"
+        },
+        {
+            "phrase": "stop listening",
+            "action": "pause",
+            "description": "Pauses speech recognition"
+        },
+        {
+            "phrase": "resume listening",
+            "action": "resume",
+            "description": "Resumes speech recognition"
+        },
+        {
+            "phrase": "continue listening",
+            "action": "resume",
+            "description": "Resumes speech recognition"
+        }
+    ],
+    "settings": {
+        "caseSensitive": false,
+        "ignorePunctuation": true,
+        "partialMatch": false
+    }
+}

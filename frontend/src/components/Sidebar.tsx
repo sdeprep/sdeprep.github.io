@@ -30,7 +30,7 @@ const positionStyles: { [key: string]: { [key: string]: string } } = {
 
 const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts, ...props }) => {
   const [isHidden, setIsHidden] = useState(true);
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { isDarkMode, visualEffectsEnabled, toggleTheme, toggleVisualEffects } = useTheme();
   const { questions, selectedQuestion, selectQuestion } = useQuestions();
 
   // Solarized color palette
@@ -231,14 +231,15 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts, ...props }
     >
       <SidebarOpener parentSidebarPosition={position} setIsParentSidebarHidden={setIsHidden} />
 
-      {/* Three Buttons Row - for right sidebar */}
+      {/* Five Buttons Row - for right sidebar */}
       {position === 'right' && (
         <div className="flex justify-between items-center mb-6 gap-2">
-          {/* Keyboard Shortcuts Button - Left */}
+          {/* Keyboard Shortcuts Button */}
           <div
             style={buttonStyle}
             onClick={onShowShortcuts}
             className="hover:scale-105"
+            title="Keyboard Shortcuts (Cmd/Ctrl + /)"
           >
             <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke={solarizedText} strokeWidth="2">
               <path d="M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" />
@@ -251,11 +252,12 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts, ...props }
             </svg>
           </div>
 
-          {/* iCloud Sync Download Button - Left Center */}
+          {/* iCloud Sync Download Button */}
           <div
             style={buttonStyle}
             onClick={handleiCloudSyncDownload}
             className="hover:scale-105"
+            title="Download Sync Data"
           >
             <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke={solarizedText} strokeWidth="2">
               <path d="M12 7v14" />
@@ -264,11 +266,12 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts, ...props }
             </svg>
           </div>
 
-          {/* iCloud Sync Upload Button - Right Center */}
+          {/* iCloud Sync Upload Button */}
           <div
             style={buttonStyle}
             onClick={triggerUpload}
             className="hover:scale-105"
+            title="Upload Sync Data"
           >
             <input type="file" id="icloud-sync-upload-input" style={{ display: 'none' }} onChange={handleiCloudSyncUpload} accept=".json" />
             <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke={solarizedText} strokeWidth="2">
@@ -278,8 +281,39 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts, ...props }
             </svg>
           </div>
 
-          {/* Theme Toggle - Right Center */}
-          <div style={toggleSwitchStyle} onClick={toggleTheme} className="hover:scale-105">
+          {/* Visual Effects Toggle */}
+          <div
+            style={toggleSwitchStyle}
+            onClick={toggleVisualEffects}
+            className="hover:scale-105"
+            title={`${visualEffectsEnabled ? 'Disable' : 'Enable'} Visual Effects (Water Ripples & Cursor Effects)`}
+          >
+            <div style={{
+              ...toggleKnobStyle,
+              backgroundColor: visualEffectsEnabled ? (isDarkMode ? solarized.blue : solarized.yellow) : (isDarkMode ? solarized.base02 : solarized.base2)
+            }}>
+              {visualEffectsEnabled ? (
+                // Sparkles icon for effects enabled
+                <svg style={{ width: '14px', height: '14px' }} viewBox="0 0 24 24" fill="none" stroke={isDarkMode ? solarized.base3 : solarized.base03} strokeWidth="2">
+                  <path d="M12 3v3m0 12v3m9-9h-3M6 12H3m15.364-6.364l-2.121 2.121M8.757 15.243l-2.121 2.121m12.728 0l-2.121-2.121M8.757 8.757l-2.121-2.121" />
+                  <path d="M12 8l1.5 3L17 10l-3 1.5L12 16l-1.5-3L7 14l3-1.5L12 8z" />
+                </svg>
+              ) : (
+                // Simple circle for effects disabled
+                <svg style={{ width: '14px', height: '14px' }} viewBox="0 0 24 24" fill="none" stroke={solarizedText} strokeWidth="2">
+                  <circle cx="12" cy="12" r="4" />
+                </svg>
+              )}
+            </div>
+          </div>
+
+          {/* Theme Toggle */}
+          <div
+            style={toggleSwitchStyle}
+            onClick={toggleTheme}
+            className="hover:scale-105"
+            title={`Switch to ${isDarkMode ? 'Light' : 'Dark'} Mode`}
+          >
             <div style={toggleKnobStyle}>
               {isDarkMode ? (
                 // Moon icon for dark mode
@@ -301,17 +335,6 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts, ...props }
                 </svg>
               )}
             </div>
-          </div>
-
-          {/* Profile Button - Right */}
-          <div
-            style={buttonStyle}
-            className="hover:scale-105"
-          >
-            <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke={solarizedText} strokeWidth="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
           </div>
         </div>
       )}

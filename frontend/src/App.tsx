@@ -1,5 +1,5 @@
 import './App.css';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Sidebar from './components/Sidebar';
 import CodeEditor from './components/CodeEditor';
 import KeyboardShortcutsModal from './components/KeyboardShortcutsModal';
@@ -8,6 +8,7 @@ import WaterRipples from './components/WaterRipples';
 import BackgroundInteractionGuide from './components/BackgroundInteractionGuide';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { QuestionProvider } from './contexts/QuestionContext';
+import { detectWakeWords } from './utils/speechUtils';
 
 function AppContent() {
   const [showShortcuts, setShowShortcuts] = useState(false);
@@ -15,7 +16,9 @@ function AppContent() {
   const [isListening, setIsListening] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0); // Direct audio level value
   const [transcriptToast, setTranscriptToast] = useState({ message: '', isVisible: false });
-  const { isDarkMode } = useTheme();
+  const [isAwakeMode, setIsAwakeMode] = useState(false); // Sleep mode by default
+  const [isPaused, setIsPaused] = useState(false); // Pause state for awake mode
+  const { isDarkMode, visualEffectsEnabled } = useTheme();
 
   // Solarized color palette
   const solarized = {
@@ -37,8 +40,15 @@ function AppContent() {
     setToast({ message: '', isVisible: false });
   };
 
-  const showTranscriptToast = (message: string) => {
+  const showTranscriptToast = (message: string, duration?: number) => {
     setTranscriptToast({ message, isVisible: true });
+
+    // Auto-hide "Listening..." message after a longer duration
+    if (message === 'Listening...' && duration !== 0) {
+      setTimeout(() => {
+        hideTranscriptToast();
+      }, duration || 4000); // 4 seconds instead of default shorter time
+    }
   };
 
   const hideTranscriptToast = () => {
@@ -51,7 +61,6 @@ function AppContent() {
 
   // Audio level capture using Web Audio API
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
-  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const isListeningRef = useRef(false);
 
@@ -67,8 +76,10 @@ function AppContent() {
       recognitionInstance.lang = 'en-US';
 
       recognitionInstance.onstart = () => {
-        console.log('Speech recognition started');
-        showTranscriptToast('Listening...');
+        console.log('Speech recognition started - isAwakeMode:', isAwakeMode);
+        if (isAwakeMode) {
+          showTranscriptToast('Listening...');
+        }
       };
 
       recognitionInstance.onresult = (event: any) => {
@@ -85,35 +96,101 @@ function AppContent() {
         }
 
         const currentTranscript = finalTranscript || interimTranscript;
-        if (currentTranscript) {
-          showTranscriptToast(currentTranscript);
-        }
 
-        // Check for stop command
-        if (finalTranscript.toLowerCase().includes('stop listening') ||
-          finalTranscript.toLowerCase().includes('stop recording')) {
-          recognitionInstance.stop();
+        if (isAwakeMode) {
+          // Awake mode: show all transcripts and handle commands
+          if (!isPaused && currentTranscript) {
+            showTranscriptToast(currentTranscript);
+          }
+
+          // Check for commands in awake mode
+          if (finalTranscript) {
+            const command = detectWakeWords(finalTranscript);
+            if (command) {
+              if (command.action === 'pause') {
+                setIsPaused(true);
+                showTranscriptToast('Paused - say "resume listening" or "let\'s go" to continue');
+              } else if (command.action === 'resume' || command.action === 'wake_up') {
+                setIsPaused(false);
+                showTranscriptToast('Listening...');
+              }
+            }
+          }
+
+          // Legacy stop commands that return to sleep mode
+          if (finalTranscript.toLowerCase().includes('stop recording') ||
+            finalTranscript.toLowerCase().includes('go to sleep')) {
+            setIsAwakeMode(false); // Return to sleep mode
+            setIsPaused(false);
+            showToast('😴 Returning to sleep mode - say "let\'s go" to wake up');
+            recognitionInstance.stop();
+          }
+        } else {
+          // Sleep mode: only listen for wake words
+          if (finalTranscript) {
+            const wakeWord = detectWakeWords(finalTranscript);
+            if (wakeWord && wakeWord.action === 'wake_up') {
+              console.log('Wake word detected:', wakeWord.phrase);
+              setIsAwakeMode(true);
+              showTranscriptToast('Listening...');
+            }
+          }
         }
       };
 
       recognitionInstance.onerror = (event: any) => {
         console.error('Speech recognition error:', event.error);
         hideTranscriptToast();
-        showToast(`❌ Speech recognition error: ${event.error}`);
+
+        // Don't show error toast for "aborted" errors as they're expected during mode transitions
+        if (event.error !== 'aborted') {
+          showToast(`❌ Speech recognition error: ${event.error}`);
+        }
       };
 
       recognitionInstance.onend = () => {
         console.log('Speech recognition ended');
         hideTranscriptToast();
+
+        // In sleep mode, automatically restart recognition
+        if (!isAwakeMode && isListening) {
+          setTimeout(() => {
+            try {
+              recognitionInstance.start();
+            } catch (error) {
+              console.error('Error restarting speech recognition:', error);
+            }
+          }, 100);
+        }
       };
 
       setRecognition(recognitionInstance);
     } else {
       console.warn('Speech Recognition not supported in this browser');
     }
-  }, []);
+  }, [isAwakeMode]);
 
-  const startAudioCapture = async () => {
+  // Auto-start speech recognition on page load (sleep mode)
+  useEffect(() => {
+    const autoStartRecognition = async () => {
+      try {
+        console.log('Auto-starting speech recognition in sleep mode...');
+        // Request microphone permission and start audio capture
+        await startAudioCapture();
+      } catch (error) {
+        console.error('Failed to auto-start speech recognition:', error);
+        showToast('⚠️ Please allow microphone access for voice commands');
+      }
+    };
+
+    // Only auto-start if recognition is available
+    if (recognition) {
+      const timer = setTimeout(autoStartRecognition, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [recognition]);
+
+  const startAudioCapture = useCallback(async () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const context = new AudioContext();
@@ -130,7 +207,6 @@ function AppContent() {
 
       setStream(mediaStream);
       setAudioContext(context);
-      setAnalyser(analyserNode);
       setIsListening(true);
       isListeningRef.current = true;
 
@@ -165,10 +241,7 @@ function AppContent() {
           // Apply logarithmic scaling for more natural response
           const logLevel = normalizedLevel > 0 ? Math.log10(normalizedLevel * 9 + 1) : 0;
 
-          // Debug logging (remove in production)
-          if (logLevel > 0.1) {
-            console.log(`Audio Level: ${logLevel.toFixed(3)}, RMS: ${rms.toFixed(3)}, Normalized: ${normalizedLevel.toFixed(3)}`);
-          }
+          // Audio level monitoring (debug logging removed for cleaner console)
 
           setAudioLevel(logLevel);
 
@@ -181,7 +254,7 @@ function AppContent() {
       console.error('Error accessing microphone:', error);
       showToast('❌ Error accessing microphone');
     }
-  };
+  }, [recognition]);
 
   const stopAudioCapture = () => {
     isListeningRef.current = false;
@@ -199,9 +272,14 @@ function AppContent() {
     }
     setStream(null);
     setAudioContext(null);
-    setAnalyser(null);
     setIsListening(false);
     setAudioLevel(0);
+
+    // Return to sleep mode when manually stopping
+    if (isAwakeMode) {
+      setIsAwakeMode(false);
+      showToast('😴 Returning to sleep mode - say "let\'s go" to wake up');
+    }
   };
 
   const toggleMicrophone = () => {
@@ -223,21 +301,34 @@ function AppContent() {
     const isInsideToast = target.closest('[data-toast]');
 
     if (!isInsideSidebar && !isInsideCodeEditor && !isInsideModal && !isInsideToast) {
-      toggleMicrophone();
+      // In sleep mode, clicking activates awake mode
+      if (!isAwakeMode) {
+        setIsAwakeMode(true);
+        if (!isListening) {
+          startAudioCapture();
+        }
+      } else {
+        // In awake mode, clicking toggles microphone
+        toggleMicrophone();
+      }
     }
   };
 
   // Detect OS for appropriate keyboard symbols and display
   const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-  const userAgent = navigator.userAgent;
-  let osName = 'Unknown OS';
-  if (userAgent.indexOf("Mac") != -1) osName = "macOS";
-  else if (userAgent.indexOf("Win") != -1) osName = "Windows";
-  else if (userAgent.indexOf("Linux") != -1) osName = "Linux";
-  else if (userAgent.indexOf("Android") != -1) osName = "Android";
-  else if (userAgent.indexOf("like Mac") != -1) osName = "iOS"; // iPad, iPhone
 
-  console.log(`Detected OS: ${osName}`);
+  // Log OS detection only once on component mount
+  useEffect(() => {
+    const userAgent = navigator.userAgent;
+    let osName = 'Unknown OS';
+    if (userAgent.indexOf("Mac") != -1) osName = "macOS";
+    else if (userAgent.indexOf("Win") != -1) osName = "Windows";
+    else if (userAgent.indexOf("Linux") != -1) osName = "Linux";
+    else if (userAgent.indexOf("Android") != -1) osName = "Android";
+    else if (userAgent.indexOf("like Mac") != -1) osName = "iOS"; // iPad, iPhone
+
+    console.log(`Detected OS: ${osName}`);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -297,10 +388,10 @@ function AppContent() {
   return (
     <div className={`app`} style={appStyle} onClick={handleAppClick}>
       {/* Background interaction guide layer */}
-      <BackgroundInteractionGuide audioLevel={audioLevel} isListening={isListening} />
+      {visualEffectsEnabled && <BackgroundInteractionGuide audioLevel={audioLevel} isListening={isListening} />}
 
       {/* Water ripple effects layer */}
-      <WaterRipples audioLevel={audioLevel} isListening={isListening} />
+      {visualEffectsEnabled && <WaterRipples audioLevel={audioLevel} isListening={isListening} />}
 
       <Sidebar position="left" data-sidebar />
       {/* <Sidebar position="bottom" /> */}

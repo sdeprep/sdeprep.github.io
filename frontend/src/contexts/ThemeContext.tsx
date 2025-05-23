@@ -2,7 +2,9 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface ThemeContextType {
     isDarkMode: boolean;
+    visualEffectsEnabled: boolean;
     toggleTheme: () => void;
+    toggleVisualEffects: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -26,8 +28,18 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         return savedTheme === 'dark';
     });
 
+    const [visualEffectsEnabled, setVisualEffectsEnabled] = useState(() => {
+        // Initialize from localStorage or default to true
+        const savedEffects = localStorage.getItem('visualEffects');
+        return savedEffects !== 'false'; // Default to true unless explicitly disabled
+    });
+
     const toggleTheme = () => {
         setIsDarkMode(!isDarkMode);
+    };
+
+    const toggleVisualEffects = () => {
+        setVisualEffectsEnabled(!visualEffectsEnabled);
     };
 
     useEffect(() => {
@@ -44,8 +56,13 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         }
     }, [isDarkMode]);
 
+    useEffect(() => {
+        // Save visual effects preference to localStorage
+        localStorage.setItem('visualEffects', visualEffectsEnabled ? 'true' : 'false');
+    }, [visualEffectsEnabled]);
+
     return (
-        <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
+        <ThemeContext.Provider value={{ isDarkMode, visualEffectsEnabled, toggleTheme, toggleVisualEffects }}>
             {children}
         </ThemeContext.Provider>
     );
