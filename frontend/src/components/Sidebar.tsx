@@ -4,8 +4,9 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useQuestions } from '../contexts/QuestionContext';
 
 interface SidebarProps {
-  position: string;
+  position: 'left' | 'right' | 'bottom';
   onShowShortcuts?: () => void;
+  'data-sidebar'?: boolean;
 }
 
 const positionStyles: { [key: string]: { [key: string]: string } } = {
@@ -27,7 +28,7 @@ const positionStyles: { [key: string]: { [key: string]: string } } = {
   },
 };
 
-const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
+const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts, ...props }) => {
   const [isHidden, setIsHidden] = useState(true);
   const { isDarkMode, toggleTheme } = useTheme();
   const { questions, selectedQuestion, selectQuestion } = useQuestions();
@@ -211,18 +212,22 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
   const solarizedBorder = solarized.base01;
   const solarizedText = isDarkMode ? solarized.base0 : solarized.base00;
 
+  const sidebarClasses = `${baseClasses} ${styles.positionClasses} ${currentPositionClass} ${transitionClasses} flex flex-col`;
+  const sidebarStyle = {
+    ...sidebarStyles[position],
+    zIndex: 10,
+    backgroundColor: solarizedBg,
+    borderColor: solarizedBorder,
+    color: solarizedText
+  };
+
   return (
     <div
-      className={`${baseClasses} ${styles.positionClasses} ${currentPositionClass} ${transitionClasses} flex flex-col`}
-      style={{
-        ...sidebarStyles[position],
-        zIndex: 10,
-        backgroundColor: solarizedBg,
-        borderColor: solarizedBorder,
-        color: solarizedText
-      }}
+      className={sidebarClasses}
+      style={sidebarStyle}
       onMouseEnter={() => setIsHidden(false)}
       onMouseLeave={() => setIsHidden(true)}
+      {...props}
     >
       <SidebarOpener parentSidebarPosition={position} setIsParentSidebarHidden={setIsHidden} />
 

@@ -5,9 +5,10 @@ interface ToastProps {
   isVisible: boolean;
   onClose: () => void;
   duration?: number;
+  'data-toast'?: boolean;
 }
 
-const Toast: React.FC<ToastProps> = ({ message, isVisible, onClose, duration = 3000 }) => {
+const Toast: React.FC<ToastProps> = ({ message, isVisible, onClose, duration = 3000, ...props }) => {
   useEffect(() => {
     if (isVisible) {
       const timer = setTimeout(() => {
@@ -52,7 +53,7 @@ const Toast: React.FC<ToastProps> = ({ message, isVisible, onClose, duration = 3
           }
         `}
       </style>
-      <div style={toastStyle}>{message}</div>
+      <div style={toastStyle} {...props}>{message}</div>
     </>
   );
 };

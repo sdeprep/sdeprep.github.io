@@ -6,9 +6,10 @@ import { useTheme } from '../contexts/ThemeContext';
 interface KeyboardShortcutsModalProps {
   isOpen: boolean;
   onClose: () => void;
+  'data-modal'?: boolean;
 }
 
-const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen, onClose }) => {
+const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen, onClose, ...props }) => {
   const { isDarkMode } = useTheme();
 
   if (!isOpen) return null;
@@ -182,7 +183,7 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
   ];
 
   return (
-    <div style={overlayStyle} onClick={onClose}>
+    <div style={overlayStyle} onClick={onClose} {...props}>
       <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
         <div style={{ ...headerStyle, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <h2 style={{ ...titleStyle, marginBottom: '0' }}>Keyboard Shortcuts</h2>
