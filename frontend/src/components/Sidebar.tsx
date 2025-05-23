@@ -52,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
     violet: '#6c71c4'
   };
 
-  const handleiCloudSync = () => {
+  const handleiCloudSyncDownload = () => {
     const themeState = localStorage.getItem('theme');
     const selectedQuestionId = localStorage.getItem('selectedQuestionId');
 
@@ -88,6 +88,56 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
     URL.revokeObjectURL(url);
 
     alert('Please download the file to your desired iCloud drive folder (preferred location would be iCloud drive / SDE).');
+  };
+
+  const handleiCloudSyncUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const content = e.target?.result as string;
+        const syncData = JSON.parse(content);
+
+        // Update localStorage with uploaded data
+        // This triggers the useEffect hooks in ThemeContext, QuestionContext,
+        // and CodeEditor, which read from localStorage and update component state.
+        if (syncData.theme !== undefined) {
+          localStorage.setItem('theme', syncData.theme);
+        }
+        if (syncData.selectedQuestionId !== undefined) {
+          localStorage.setItem('selectedQuestionId', syncData.selectedQuestionId);
+          // Trigger question selection to update UI explicitly if needed, though useEffect should cover it
+          const questionToSelect = questions.find(q => q.id === syncData.selectedQuestionId);
+          if (questionToSelect) {
+            selectQuestion(questionToSelect);
+          }
+        }
+        if (syncData.savedCode) {
+          Object.keys(syncData.savedCode).forEach(questionId => {
+            localStorage.setItem(`code_${questionId}`, syncData.savedCode[questionId]);
+          });
+        }
+
+        alert('Sync data uploaded and applied!');
+
+        // Reload the page to ensure all contexts re-initialize from localStorage reliably.
+        // While hooks should catch changes, a reload is a simple way to guarantee fresh state.
+        window.location.reload();
+
+      } catch (error) {
+        alert('Error reading or parsing sync file.' + error);
+        console.error('Error reading or parsing sync file:', error);
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const triggerUpload = () => {
+    document.getElementById('icloud-sync-upload-input')?.click();
   };
 
   const transitionClasses = 'transition-all duration-300 ease-in-out';
@@ -196,15 +246,30 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
             </svg>
           </div>
 
-          {/* iCloud Sync Button - Center */}
+          {/* iCloud Sync Download Button - Left Center */}
           <div
             style={buttonStyle}
-            onClick={handleiCloudSync}
+            onClick={handleiCloudSyncDownload}
             className="hover:scale-105"
           >
             <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke={solarizedText} strokeWidth="2">
-              <path d="M10 20l-6-6-4 4V4l4-4 6 6" />
-              <path d="M10 20l6-6 4 4V4l-4-4-6 6" />
+              <path d="M12 17V3" />
+              <path d="M5 10L12 3 19 10" />
+              <path d="M21 21H3" />
+            </svg>
+          </div>
+
+          {/* iCloud Sync Upload Button - Right Center */}
+          <div
+            style={buttonStyle}
+            onClick={triggerUpload}
+            className="hover:scale-105"
+          >
+            <input type="file" id="icloud-sync-upload-input" style={{ display: 'none' }} onChange={handleiCloudSyncUpload} accept=".json" />
+            <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke={solarizedText} strokeWidth="2">
+              <path d="M12 7v14" />
+              <path d="M19 14l-7 7-7-7" />
+              <path d="M21 3H3" />
             </svg>
           </div>
 
