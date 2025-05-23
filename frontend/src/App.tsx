@@ -64,48 +64,6 @@ function AppContent() {
         showToast('🚀 Code execution triggered!');
       }
 
-      // Cmd/Ctrl + S - Save file
-      if (cmdOrCtrl && event.key === 's') {
-        event.preventDefault();
-        showToast('💾 File saved!');
-      }
-
-      // Cmd/Ctrl + Z - Undo
-      if (cmdOrCtrl && event.key === 'z' && !event.shiftKey) {
-        event.preventDefault();
-        showToast('↶ Undo action');
-      }
-
-      // Cmd/Ctrl + Shift + Z - Redo
-      if (cmdOrCtrl && event.key === 'z' && event.shiftKey) {
-        event.preventDefault();
-        showToast('↷ Redo action');
-      }
-
-      // Cmd/Ctrl + F - Find
-      if (cmdOrCtrl && event.key === 'f') {
-        event.preventDefault();
-        showToast('🔍 Find dialog opened');
-      }
-
-      // Cmd/Ctrl + G - Find next
-      if (cmdOrCtrl && event.key === 'g' && !event.shiftKey) {
-        event.preventDefault();
-        showToast('⬇️ Find next');
-      }
-
-      // Cmd/Ctrl + Shift + G - Find previous
-      if (cmdOrCtrl && event.key === 'g' && event.shiftKey) {
-        event.preventDefault();
-        showToast('⬆️ Find previous');
-      }
-
-      // Cmd/Ctrl + H - Replace
-      if (cmdOrCtrl && event.key === 'h') {
-        event.preventDefault();
-        showToast('🔄 Replace dialog opened');
-      }
-
       // Cmd/Ctrl + D - Select word
       if (cmdOrCtrl && event.key === 'd') {
         event.preventDefault();
