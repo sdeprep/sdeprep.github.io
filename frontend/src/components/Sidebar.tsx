@@ -253,9 +253,9 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
             className="hover:scale-105"
           >
             <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke={solarizedText} strokeWidth="2">
-              <path d="M12 17V3" />
-              <path d="M5 10L12 3 19 10" />
-              <path d="M21 21H3" />
+              <path d="M12 7v14" />
+              <path d="M19 14l-7 7-7-7" />
+              <path d="M21 3H3" />
             </svg>
           </div>
 
@@ -267,9 +267,9 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
           >
             <input type="file" id="icloud-sync-upload-input" style={{ display: 'none' }} onChange={handleiCloudSyncUpload} accept=".json" />
             <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke={solarizedText} strokeWidth="2">
-              <path d="M12 7v14" />
-              <path d="M19 14l-7 7-7-7" />
-              <path d="M21 3H3" />
+              <path d="M12 17V3" />
+              <path d="M5 10L12 3 19 10" />
+              <path d="M21 21H3" />
             </svg>
           </div>
 
