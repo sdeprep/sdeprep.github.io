@@ -1,10 +1,11 @@
 import Editor from '@monaco-editor/react';
+import { useState, useEffect } from 'react';
+import { useQuestions } from '../contexts/QuestionContext';
 
 interface CodeEditorProps {
   defaultValue?: string;
   defaultLanguage?: string;
   defaultPath?: string;
-  value?: string;
   language?: string;
   path?: string;
   theme?: 'light' | 'vs-dark';
@@ -20,7 +21,6 @@ interface CodeEditorProps {
   wrapperProps?: object;
   beforeMount?: (monaco: unknown) => void;
   onMount?: (editor: unknown, monaco: unknown) => void;
-  onChange?: (value: string | undefined, event: unknown) => void;
   onValidate?: (markers: unknown[]) => void;
   containerStyle?: React.CSSProperties;
 }
@@ -30,7 +30,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
 print("Hello, World!")`,
   defaultLanguage = 'python',
   defaultPath,
-  value,
   language,
   path,
   theme = 'vs-dark',
@@ -56,7 +55,6 @@ print("Hello, World!")`,
   wrapperProps,
   beforeMount,
   onMount,
-  onChange,
   onValidate,
   containerStyle = {
     height: '90vh',
@@ -67,13 +65,36 @@ print("Hello, World!")`,
     overflow: 'hidden',
   },
 }) => {
+  const { selectedQuestion } = useQuestions();
+  const [code, setCode] = useState(defaultValue);
+
+  // Load code from localStorage when question changes
+  useEffect(() => {
+    if (selectedQuestion) {
+      const savedCode = localStorage.getItem(`code_${selectedQuestion.id}`);
+      if (savedCode) {
+        setCode(savedCode);
+      } else {
+        // Use the question's default code if no saved code exists
+        setCode(selectedQuestion.code || defaultValue);
+      }
+    }
+  }, [selectedQuestion, defaultValue]);
+
+  // Save code to localStorage when it changes
+  const handleCodeChange = (value: string | undefined) => {
+    if (value !== undefined && selectedQuestion) {
+      setCode(value);
+      localStorage.setItem(`code_${selectedQuestion.id}`, value);
+    }
+  };
+
   return (
     <div className="code-editor-container" style={containerStyle}>
       <Editor
-        defaultValue={defaultValue}
+        value={code}
         defaultLanguage={defaultLanguage}
         defaultPath={defaultPath}
-        value={value}
         language={language}
         path={path}
         theme={theme}
@@ -89,7 +110,7 @@ print("Hello, World!")`,
         wrapperProps={wrapperProps}
         beforeMount={beforeMount}
         onMount={onMount}
-        onChange={onChange}
+        onChange={handleCodeChange}
         onValidate={onValidate}
       />
     </div>

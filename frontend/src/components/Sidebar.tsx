@@ -5,6 +5,7 @@ import { useQuestions } from '../contexts/QuestionContext';
 
 interface SidebarProps {
   position: string;
+  onShowShortcuts?: () => void;
 }
 
 const positionStyles: { [key: string]: { [key: string]: string } } = {
@@ -26,7 +27,7 @@ const positionStyles: { [key: string]: { [key: string]: string } } = {
   },
 };
 
-const Sidebar: React.FC<SidebarProps> = ({ position }) => {
+const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts }) => {
   const [isHidden, setIsHidden] = useState(true);
   const { isDarkMode, toggleTheme } = useTheme();
   const { questions, selectedQuestion, selectQuestion } = useQuestions();
@@ -52,36 +53,49 @@ const Sidebar: React.FC<SidebarProps> = ({ position }) => {
     default: {},
   };
 
-  const toggleSwitchStyle: React.CSSProperties = {
-    position: 'relative',
-    width: '60px',
-    height: '30px',
-    backgroundColor: isDarkMode ? '#4a5568' : '#e2e8f0',
-    borderRadius: '15px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease',
+  const buttonStyle: React.CSSProperties = {
+    width: '40px',
+    height: '40px',
+    borderRadius: '10px',
     border: '2px solid #cbd5e0',
-    marginBottom: '20px',
-  };
-
-  const toggleKnobStyle: React.CSSProperties = {
-    position: 'absolute',
-    top: '2px',
-    left: isDarkMode ? '32px' : '2px',
-    width: '22px',
-    height: '22px',
-    backgroundColor: '#ffffff',
-    borderRadius: '50%',
-    transition: 'left 0.3s ease',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+    backgroundColor: isDarkMode ? '#4a5568' : '#f7fafc',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
   };
 
+  const toggleSwitchStyle: React.CSSProperties = {
+    position: 'relative',
+    width: '40px',
+    height: '40px',
+    backgroundColor: isDarkMode ? '#4a5568' : '#e2e8f0',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease',
+    border: '2px solid #cbd5e0',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+
+  const toggleKnobStyle: React.CSSProperties = {
+    width: '20px',
+    height: '20px',
+    backgroundColor: '#ffffff',
+    borderRadius: '50%',
+    transition: 'all 0.3s ease',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transform: isDarkMode ? 'translateX(0px)' : 'translateX(0px)',
+  };
+
   const iconStyle: React.CSSProperties = {
-    width: '12px',
-    height: '12px',
+    width: '16px',
+    height: '16px',
   };
 
   const baseClasses = `sidebar p-4 border ${isDarkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`;
@@ -95,19 +109,33 @@ const Sidebar: React.FC<SidebarProps> = ({ position }) => {
     >
       <SidebarOpener parentSidebarPosition={position} setIsParentSidebarHidden={setIsHidden} />
 
-      {/* Theme Toggle - moved to top for right sidebar */}
+      {/* Three Buttons Row - for right sidebar */}
       {position === 'right' && (
-        <div className="flex flex-col items-center mb-4">
-          <div style={toggleSwitchStyle} onClick={toggleTheme}>
+        <div className="flex justify-between items-center mb-6 gap-2">
+          {/* Keyboard Shortcuts Button - Left */}
+          <div
+            style={buttonStyle}
+            onClick={onShowShortcuts}
+            className="hover:scale-105"
+          >
+            <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke={isDarkMode ? '#e2e8f0' : '#4a5568'} strokeWidth="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="17" x2="12" y2="21" />
+            </svg>
+          </div>
+
+          {/* Theme Toggle - Center */}
+          <div style={toggleSwitchStyle} onClick={toggleTheme} className="hover:scale-105">
             <div style={toggleKnobStyle}>
               {isDarkMode ? (
                 // Moon icon for dark mode
-                <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke="#4a5568" strokeWidth="2">
+                <svg style={{ width: '14px', height: '14px' }} viewBox="0 0 24 24" fill="none" stroke="#4a5568" strokeWidth="2">
                   <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
                 </svg>
               ) : (
                 // Sun icon for light mode
-                <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2">
+                <svg style={{ width: '14px', height: '14px' }} viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2">
                   <circle cx="12" cy="12" r="5" />
                   <line x1="12" y1="1" x2="12" y2="3" />
                   <line x1="12" y1="21" x2="12" y2="23" />
@@ -120,6 +148,17 @@ const Sidebar: React.FC<SidebarProps> = ({ position }) => {
                 </svg>
               )}
             </div>
+          </div>
+
+          {/* Profile Button - Right */}
+          <div
+            style={buttonStyle}
+            className="hover:scale-105"
+          >
+            <svg style={iconStyle} viewBox="0 0 24 24" fill="none" stroke={isDarkMode ? '#e2e8f0' : '#4a5568'} strokeWidth="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
           </div>
         </div>
       )}
@@ -136,20 +175,20 @@ const Sidebar: React.FC<SidebarProps> = ({ position }) => {
                 key={question.id}
                 onClick={() => selectQuestion(question)}
                 className={`p-3 mb-2 rounded-lg cursor-pointer transition-all duration-200 ${selectedQuestion?.id === question.id
-                    ? isDarkMode
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-blue-100 text-blue-900 border border-blue-300'
-                    : isDarkMode
-                      ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-                      : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'
+                  ? isDarkMode
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-blue-100 text-blue-900 border border-blue-300'
+                  : isDarkMode
+                    ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'
                   }`}
               >
                 <div className="font-medium text-sm">{question.title}</div>
                 <div className={`text-xs mt-1 ${question.difficulty === 'Easy'
-                    ? 'text-green-500'
-                    : question.difficulty === 'Medium'
-                      ? 'text-yellow-500'
-                      : 'text-red-500'
+                  ? 'text-green-500'
+                  : question.difficulty === 'Medium'
+                    ? 'text-yellow-500'
+                    : 'text-red-500'
                   }`}>
                   {question.difficulty}
                 </div>

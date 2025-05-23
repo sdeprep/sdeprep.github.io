@@ -2,7 +2,6 @@ import './App.css';
 import { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import CodeEditor from './components/CodeEditor';
-import ProfileButton from './components/ProfileButton';
 import KeyboardShortcutsModal from './components/KeyboardShortcutsModal';
 import Toast from './components/Toast';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
@@ -20,6 +19,10 @@ function AppContent() {
 
   const hideToast = () => {
     setToast({ message: '', isVisible: false });
+  };
+
+  const handleShowShortcuts = () => {
+    setShowShortcuts(true);
   };
 
   // Detect OS for keyboard shortcuts
@@ -118,16 +121,11 @@ function AppContent() {
     <div className={`app ${isDarkMode ? 'dark-theme' : 'light-theme'}`}>
       <Sidebar position="left" />
       {/* <Sidebar position="bottom" /> */}
-      <Sidebar position="right" />
-
-      {/* Profile button in top right */}
-      <ProfileButton />
+      <Sidebar position="right" onShowShortcuts={handleShowShortcuts} />
 
       {/* Main code editor */}
       <CodeEditor
-        defaultValue={selectedQuestion?.code || ''}
         theme={isDarkMode ? 'vs-dark' : 'light'}
-        key={selectedQuestion?.id} // Force re-render when question changes
       />
 
       {/* Keyboard shortcuts modal */}
