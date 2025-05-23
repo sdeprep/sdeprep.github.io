@@ -1,4 +1,4 @@
-import './App.css'
+import './App.css';
 import Sidebar from './components/Sidebar';
 import CodeEditor from './components/CodeEditor';
 
@@ -28,7 +28,7 @@ def twoSum(nums, target):
       {/* Main code editor */}
       <CodeEditor defaultValue={originalDefaultValue} />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

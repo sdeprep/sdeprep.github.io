@@ -7,15 +7,17 @@
     "prepare": "husky",
     "lint": "cd frontend && npm run lint",
     "build": "cd frontend && npm run build",
-    "type-check": "cd frontend && npm run type-check || true"
+    "type-check": "cd frontend && npm run type-check || true",
+    "fix": "cd frontend && npm run fix",
+    "check": "cd frontend && npm run check"
   },
   "lint-staged": {
     "frontend/**/*.{js,jsx,ts,tsx}": [
-      "cd frontend && npm run lint",
+      "cd frontend && npm run lint:fix",
       "cd frontend && npm run type-check || true"
     ],
     "frontend/**/*.{js,jsx,ts,tsx,json,css,md}": [
-      "cd frontend && npm run format || true"
+      "cd frontend && npm run format"
     ]
   }
 }
