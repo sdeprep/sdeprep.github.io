@@ -77,17 +77,20 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
   };
 
   const closeButtonStyle: React.CSSProperties = {
-    position: 'absolute',
-    top: '20px',
-    right: '20px',
     background: 'none',
-    border: 'none',
+    border: `1px solid ${isDarkMode ? solarized.base01 : solarized.base1}`,
+    borderRadius: '50%',
     fontSize: '24px',
     cursor: 'pointer',
-    color: isDarkMode ? solarized.base0 : solarized.base01,
-    padding: '8px',
-    borderRadius: '8px',
+    color: isDarkMode ? solarized.base0 : solarized.base00,
+    padding: '4px',
+    width: '30px',
+    height: '30px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     transition: 'all 0.2s ease',
+    marginLeft: 'auto',
   };
 
   const contentStyle: React.CSSProperties = {
@@ -157,15 +160,16 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
   return (
     <div style={overlayStyle} onClick={onClose}>
       <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
-        <button style={closeButtonStyle} onClick={onClose}>
-          ×
-        </button>
-
-        <div style={headerStyle}>
-          <h2 style={titleStyle}>Keyboard Shortcuts</h2>
-          <span style={{ color: isDarkMode ? solarized.base0 : solarized.base00, fontSize: '13px', marginLeft: '16px' }}>
-            Shortcuts work outside code editor.
-          </span>
+        <div style={{ ...headerStyle, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <h2 style={{ ...titleStyle, marginBottom: '0' }}>Keyboard Shortcuts</h2>
+            <span style={{ color: isDarkMode ? solarized.base0 : solarized.base00, fontSize: '13px', marginLeft: '0' }}>
+              Shortcuts work outside code editor.
+            </span>
+          </div>
+          <button style={closeButtonStyle} onClick={onClose}>
+            ×
+          </button>
         </div>
 
         <div style={contentStyle}>
