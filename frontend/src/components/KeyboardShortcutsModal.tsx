@@ -139,7 +139,7 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
     padding: '10px 16px', // Increased from 6px 12px
     borderRadius: '8px', // Increased from 6px
     fontSize: '16px', // Increased from 12px
-    fontWeight: '600',
+    fontWeight: '400', // Reduced from '600' to make it less bold
     fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
     border: `2px solid ${isDarkMode ? solarized.base1 : solarized.base01}`, // Increased border width
     boxShadow: isDarkMode
@@ -186,17 +186,14 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
       <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
         <div style={{ ...headerStyle, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <h2 style={{ ...titleStyle, marginBottom: '0' }}>Keyboard Shortcuts</h2>
-          <button style={closeButtonStyle} onClick={onClose}>
-            ×
-          </button>
         </div>
 
         <div style={contentStyle}>
           {/* Code Editor Section with Split Lines */}
           <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>
-            <hr style={{ flex: 1, borderTop: `1px solid ${isDarkMode ? solarized.base01 : solarized.base1}`, margin: '0 20px 0 0' }} />
+            <hr style={{ flex: 0.3, borderTop: `1px solid ${isDarkMode ? solarized.base01 : solarized.base1}`, margin: '0 20px 0 0' }} />
             <h3 style={{ color: isDarkMode ? solarized.base0 : solarized.base00, fontSize: '16px', fontWeight: '600', margin: '0', whiteSpace: 'nowrap' }}>Code Editor</h3>
-            <hr style={{ flex: 1, borderTop: `1px solid ${isDarkMode ? solarized.base01 : solarized.base1}`, margin: '0 0 0 20px' }} />
+            <hr style={{ flex: 0.3, borderTop: `1px solid ${isDarkMode ? solarized.base01 : solarized.base1}`, margin: '0 0 0 20px' }} />
           </div>
           <div className="flex flex-col gap-[20px] mb-8">
             {codeEditorShortcuts.map((shortcut, index) => (
@@ -215,9 +212,9 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
 
           {/* Website Section with Split Lines */}
           <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>
-            <hr style={{ flex: 1, borderTop: `1px solid ${isDarkMode ? solarized.base01 : solarized.base1}`, margin: '0 20px 0 0' }} />
+            <hr style={{ flex: 0.3, borderTop: `1px solid ${isDarkMode ? solarized.base01 : solarized.base1}`, margin: '0 20px 0 0' }} />
             <h3 style={{ color: isDarkMode ? solarized.base0 : solarized.base00, fontSize: '16px', fontWeight: '600', margin: '0', whiteSpace: 'nowrap' }}>Website</h3>
-            <hr style={{ flex: 1, borderTop: `1px solid ${isDarkMode ? solarized.base01 : solarized.base1}`, margin: '0 0 0 20px' }} />
+            <hr style={{ flex: 0.3, borderTop: `1px solid ${isDarkMode ? solarized.base01 : solarized.base1}`, margin: '0 0 0 20px' }} />
           </div>
           <div className="flex flex-col gap-[20px]">
             {websiteShortcuts.map((shortcut, index) => (
