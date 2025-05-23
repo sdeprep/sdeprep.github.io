@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from '../contexts/ThemeContext';
 
 // TODO: Implement dark mode for this modal and the entire website
 
@@ -8,6 +9,8 @@ interface KeyboardShortcutsModalProps {
 }
 
 const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen, onClose }) => {
+  const { isDarkMode } = useTheme();
+
   if (!isOpen) return null;
 
   // Detect OS for appropriate keyboard symbols
@@ -26,12 +29,12 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 2000,
-    animation: 'fadeIn 0.2s ease-out',
+    zIndex: 1000,
+    animation: 'fadeIn 0.3s ease-out',
   };
 
   const modalStyle: React.CSSProperties = {
-    backgroundColor: '#ffffff',
+    backgroundColor: isDarkMode ? '#2d3748' : '#ffffff',
     borderRadius: '16px',
     padding: '0',
     maxWidth: '750px',
@@ -39,23 +42,37 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
     maxHeight: '90vh',
     overflow: 'hidden',
     boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    border: '1px solid rgba(0, 0, 0, 0.1)',
+    border: `1px solid ${isDarkMode ? '#4a5568' : 'rgba(0, 0, 0, 0.1)'}`,
     animation: 'slideIn 0.3s ease-out',
   };
 
   const headerStyle: React.CSSProperties = {
     padding: '32px 40px 24px',
-    borderBottom: '1px solid #f1f5f9',
-    backgroundColor: '#fafbfc',
+    borderBottom: `1px solid ${isDarkMode ? '#4a5568' : '#f1f5f9'}`,
+    backgroundColor: isDarkMode ? '#374151' : '#fafbfc',
   };
 
   const titleStyle: React.CSSProperties = {
     fontSize: '20px',
     fontWeight: '600',
     margin: '0',
-    color: '#0f172a',
+    color: isDarkMode ? '#f7fafc' : '#0f172a',
     letterSpacing: '-0.025em',
     textAlign: 'left',
+  };
+
+  const closeButtonStyle: React.CSSProperties = {
+    position: 'absolute',
+    top: '20px',
+    right: '20px',
+    background: 'none',
+    border: 'none',
+    fontSize: '24px',
+    cursor: 'pointer',
+    color: isDarkMode ? '#a0aec0' : '#6b7280',
+    padding: '8px',
+    borderRadius: '8px',
+    transition: 'all 0.2s ease',
   };
 
   const contentStyle: React.CSSProperties = {
@@ -82,7 +99,7 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
   };
 
   const descriptionStyle: React.CSSProperties = {
-    color: '#374151',
+    color: isDarkMode ? '#cbd5e0' : '#374151',
     fontSize: '14px',
     fontWeight: '400',
     flex: 1,
@@ -97,128 +114,72 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
   };
 
   const keyStyle: React.CSSProperties = {
-    backgroundColor: '#f3f4f6',
-    color: '#374151',
+    backgroundColor: isDarkMode ? '#4a5568' : '#f8fafc',
+    color: isDarkMode ? '#f7fafc' : '#1e293b',
     padding: '6px 12px',
     borderRadius: '6px',
-    fontSize: '14px',
-    fontWeight: '500',
-    minWidth: '32px',
-    textAlign: 'center',
-    fontFamily:
-      'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
-    border: '1px solid #e5e7eb',
-    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
-  };
-
-  const closeButtonStyle: React.CSSProperties = {
-    position: 'absolute',
-    top: '24px',
-    right: '24px',
-    background: 'none',
-    border: 'none',
-    fontSize: '24px',
-    cursor: 'pointer',
-    color: '#6b7280',
-    padding: '8px',
-    borderRadius: '8px',
-    transition: 'all 0.15s ease',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '40px',
-    height: '40px',
+    fontSize: '12px',
+    fontWeight: '600',
+    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
+    border: `1px solid ${isDarkMode ? '#718096' : '#e2e8f0'}`,
+    boxShadow: isDarkMode ? '0 1px 2px rgba(0, 0, 0, 0.3)' : '0 1px 2px rgba(0, 0, 0, 0.1)',
   };
 
   const shortcuts = [
-    {
-      keys: [cmdKey, '/'],
-      description: 'Show shortcuts',
-    },
-    {
-      keys: [cmdKey, 'Enter'],
-      description: 'Run code',
-    },
-    {
-      keys: [cmdKey, 'D'],
-      description: 'Select word',
-    },
-    {
-      keys: [altKey, '↑'],
-      description: 'Move line up',
-    },
-    {
-      keys: [altKey, '↓'],
-      description: 'Move line down',
-    },
+    { description: 'Show shortcuts', keys: [cmdKey, '/'] },
+    { description: 'Run code', keys: [cmdKey, 'Enter'] },
+    { description: 'Select word', keys: [cmdKey, 'D'] },
+    { description: 'Move line up', keys: [altKey, '↑'] },
+    { description: 'Move line down', keys: [altKey, '↓'] },
   ];
 
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
   return (
-    <>
-      <style>
-        {`
-          @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-          }
-          @keyframes slideIn {
-            from { 
-              opacity: 0;
-              transform: translateY(-20px) scale(0.95);
-            }
-            to { 
-              opacity: 1;
-              transform: translateY(0) scale(1);
-            }
-          }
-        `}
-      </style>
-      <div style={overlayStyle} onClick={handleOverlayClick}>
-        <div style={{ ...modalStyle, position: 'relative' }}>
-          <button
-            style={closeButtonStyle}
-            onClick={onClose}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f9fafb';
-              e.currentTarget.style.color = '#374151';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.color = '#6b7280';
-            }}
-          >
-            ×
-          </button>
+    <div style={overlayStyle} onClick={onClose}>
+      <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+        <button style={closeButtonStyle} onClick={onClose}>
+          ×
+        </button>
 
-          <div style={headerStyle}>
-            <h2 style={titleStyle}>Keyboard Shortcuts</h2>
-          </div>
+        <div style={headerStyle}>
+          <h2 style={titleStyle}>Keyboard Shortcuts</h2>
+        </div>
 
-          <div style={contentStyle}>
-            <div style={shortcutsListStyle}>
-              {shortcuts.map((shortcut, index) => (
-                <div key={index} style={shortcutItemStyle}>
-                  <span style={descriptionStyle}>{shortcut.description}</span>
-                  <div style={shortcutKeysStyle}>
-                    {shortcut.keys.map((key, keyIndex) => (
-                      <span key={keyIndex} style={keyStyle}>
-                        {key}
-                      </span>
-                    ))}
-                  </div>
+        <div style={contentStyle}>
+          <div style={shortcutsListStyle}>
+            {shortcuts.map((shortcut, index) => (
+              <div key={index} style={shortcutItemStyle}>
+                <span style={descriptionStyle}>{shortcut.description}</span>
+                <div style={shortcutKeysStyle}>
+                  {shortcut.keys.map((key, keyIndex) => (
+                    <span key={keyIndex} style={keyStyle}>
+                      {key}
+                    </span>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
-    </>
+
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+          from { 
+            opacity: 0; 
+            transform: translateY(-20px) scale(0.95); 
+          }
+          to { 
+            opacity: 1; 
+            transform: translateY(0) scale(1); 
+          }
+        }
+      `}</style>
+    </div>
   );
 };
 

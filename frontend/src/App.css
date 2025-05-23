@@ -1,10 +1,60 @@
+/* Light theme (default) */
+.light-theme {
+  background-color: #ffffff;
+  color: #1a202c;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark theme */
+.dark-theme {
+  background-color: #1a202c;
+  color: #f7fafc;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* App container */
 .app {
+  min-height: 100vh;
+  width: 100vw;
+  position: relative;
   text-align: center;
   padding: 2rem;
-  position: relative;
   /* Needed for z-index to work */
   z-index: 1;
   /* Base z-index for main content */
+}
+
+/* Ensure body also gets theme classes */
+body.light-theme {
+  background-color: #ffffff;
+  color: #1a202c;
+}
+
+body.dark-theme {
+  background-color: #1a202c;
+  color: #f7fafc;
+}
+
+/* Theme-aware sidebar adjustments */
+.dark-theme .sidebar {
+  filter: brightness(0.8);
+}
+
+.light-theme .sidebar {
+  filter: brightness(1);
+}
+
+/* Theme-aware modal adjustments */
+.dark-theme .keyboard-shortcuts-modal {
+  background-color: #2d3748;
+  color: #f7fafc;
+  border-color: #4a5568;
+}
+
+.light-theme .keyboard-shortcuts-modal {
+  background-color: #ffffff;
+  color: #1a202c;
+  border-color: #e2e8f0;
 }
 
 .sidebar {

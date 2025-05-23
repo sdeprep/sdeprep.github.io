@@ -5,10 +5,12 @@ import CodeEditor from './components/CodeEditor';
 import ProfileButton from './components/ProfileButton';
 import KeyboardShortcutsModal from './components/KeyboardShortcutsModal';
 import Toast from './components/Toast';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 
-function App() {
+function AppContent() {
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [toast, setToast] = useState({ message: '', isVisible: false });
+  const { isDarkMode } = useTheme();
 
   const originalDefaultValue = `"""
 Given an array of integers nums and an integer target,
@@ -127,16 +129,19 @@ def twoSum(nums, target):
   }, [isMac, showShortcuts]);
 
   return (
-    <div className="app">
-      <Sidebar position="left" />
-      <Sidebar position="bottom" />
+    <div className={`app ${isDarkMode ? 'dark-theme' : 'light-theme'}`}>
+      {/* <Sidebar position="left" /> */}
+      {/* <Sidebar position="bottom" /> */}
       <Sidebar position="right" />
 
       {/* Profile button in top right */}
       <ProfileButton />
 
       {/* Main code editor */}
-      <CodeEditor defaultValue={originalDefaultValue} />
+      <CodeEditor
+        defaultValue={originalDefaultValue}
+        theme={isDarkMode ? 'vs-dark' : 'light'}
+      />
 
       {/* Keyboard shortcuts modal */}
       <KeyboardShortcutsModal isOpen={showShortcuts} onClose={() => setShowShortcuts(false)} />
@@ -144,6 +149,14 @@ def twoSum(nums, target):
       {/* Toast notifications */}
       <Toast message={toast.message} isVisible={toast.isVisible} onClose={hideToast} />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }
 
