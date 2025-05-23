@@ -1,29 +1,82 @@
 import Editor from '@monaco-editor/react';
 
-const CodeEditor: React.FC = () => {
+interface CodeEditorProps {
+    defaultValue?: string;
+    defaultLanguage?: string;
+    defaultPath?: string;
+    value?: string;
+    language?: string;
+    path?: string;
+    theme?: 'light' | 'vs-dark';
+    line?: number;
+    loading?: React.ReactNode;
+    options?: object;
+    overrideServices?: object;
+    saveViewState?: boolean;
+    keepCurrentModel?: boolean;
+    height?: string | number;
+    width?: string | number;
+    className?: string;
+    wrapperProps?: object;
+    beforeMount?: (monaco: any) => void;
+    onMount?: (editor: any, monaco: any) => void;
+    onChange?: (value: string | undefined, event: any) => void;
+    onValidate?: (markers: any[]) => void;
+    containerStyle?: React.CSSProperties;
+}
+
+const CodeEditor: React.FC<CodeEditorProps> = ({
+    defaultValue = `# Hello, World!
+print("Hello, World!")`,
+    defaultLanguage = "python",
+    defaultPath,
+    value,
+    language,
+    path,
+    theme = "vs-dark",
+    line,
+    loading,
+    options,
+    overrideServices,
+    saveViewState,
+    keepCurrentModel,
+    height = "100%",
+    width = "100%",
+    className,
+    wrapperProps,
+    beforeMount,
+    onMount,
+    onChange,
+    onValidate,
+    containerStyle = { height: '90vh', width: '80%', margin: '0 auto', border: '1px solid #cccccc', borderRadius: '12px' }
+}) => {
     return (
-        <div className="code-editor-container" style={{ height: '90vh', width: '80%', margin: '0 auto', border: '1px solid #cccccc', borderRadius: '12px' }}>
+        <div className="code-editor-container" style={containerStyle}>
             <Editor
-                height="100%"
-                defaultLanguage="python"
-                defaultValue={`
-# Given an array of integers nums and an integer target,
-# return indices of the two numbers such that they add up to target.
-# You may assume that each input would have exactly one solution,
-# and you may not use the same element twice.
-# You can return the answer in any order.
-
-# Example 1:
-# Input: nums = [2,7,11,15], target = 9
-# Output: [0,1]
-# Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
-
-def twoSum(nums, target):
-    pass # Your code here
-`}
+                defaultValue={defaultValue}
+                defaultLanguage={defaultLanguage}
+                defaultPath={defaultPath}
+                value={value}
+                language={language}
+                path={path}
+                theme={theme}
+                line={line}
+                loading={loading}
+                options={options}
+                overrideServices={overrideServices}
+                saveViewState={saveViewState}
+                keepCurrentModel={keepCurrentModel}
+                height={height}
+                width={width}
+                className={className}
+                wrapperProps={wrapperProps}
+                beforeMount={beforeMount}
+                onMount={onMount}
+                onChange={onChange}
+                onValidate={onValidate}
             />
         </div>
     );
 };
 
-export default CodeEditor; 
+export default CodeEditor;
