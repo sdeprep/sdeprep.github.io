@@ -32,8 +32,22 @@
         }
     ],
     "questions": {
-        "sorting": [],
-        "recursion": [],
+        "sorting": [
+            {
+                "id": "merge-sort",
+                "title": "Merge Sort",
+                "category": "sorting",
+                "code": "# Merge Sort\n\n\"\"\"\nImplement merge sort algorithm to sort an array in ascending order.\n\nExample:\nInput: [38, 27, 43, 3, 9, 82, 10]\nOutput: [3, 9, 10, 27, 38, 43, 82]\n\nTime Complexity: O(n log n)\nSpace Complexity: O(n)\n\"\"\"\n\ndef mergeSort(arr):\n    \"\"\"\n    :type arr: List[int]\n    :rtype: List[int]\n    \"\"\"\n    # TODO: implement merge sort\n    pass"
+            }
+        ],
+        "recursion": [
+            {
+                "id": "fibonacci",
+                "title": "Fibonacci Sequence",
+                "category": "recursion",
+                "code": "# Fibonacci Sequence\n\n\"\"\"\nWrite a recursive function to find the nth Fibonacci number.\n\nExample:\nInput: n = 6\nOutput: 8\nExplanation: F(6) = F(5) + F(4) = 5 + 3 = 8\n\nSequence: 0, 1, 1, 2, 3, 5, 8, 13, 21, ...\n\"\"\"\n\ndef fibonacci(n):\n    \"\"\"\n    :type n: int\n    :rtype: int\n    \"\"\"\n    # TODO: implement recursive fibonacci\n    pass"
+            }
+        ],
         "trees": [
             {
                 "id": "binary-tree-level-order",
@@ -48,8 +62,22 @@
                 "code": "\"\"\"\n- Task: level-order traversal  \n  - bottom→top  \n  - left→right  \n- Node: TreeNode(val,left,right)\n- Example  \n  - Tree  \n        3\n       / \\\n      9  20\n         / \\\n        15  7\n  - Output [[15,7],[9,20],[3]]\n\"\"\"\nfrom typing import List\n\n\nclass Solution:\n    def levelOrderBottom(self, root) -> List[List[int]]:\n        # TODO: implement\n        pass"
             }
         ],
-        "graphs": [],
-        "dynamic-programming": [],
+        "graphs": [
+            {
+                "id": "graph-dfs",
+                "title": "Graph DFS",
+                "category": "graphs",
+                "code": "# Graph Depth-First Search\n\n\"\"\"\nImplement depth-first search traversal for a graph.\n\nExample:\nInput: graph = {0: [1, 2], 1: [0, 3], 2: [0], 3: [1]}, start = 0\nOutput: [0, 1, 3, 2] (one possible DFS order)\n\nGraph representation: adjacency list\n\"\"\"\n\ndef dfs(graph, start):\n    \"\"\"\n    :type graph: Dict[int, List[int]]\n    :type start: int\n    :rtype: List[int]\n    \"\"\"\n    # TODO: implement DFS traversal\n    pass"
+            }
+        ],
+        "dynamic-programming": [
+            {
+                "id": "climbing-stairs",
+                "title": "Climbing Stairs",
+                "category": "dynamic-programming",
+                "code": "# Climbing Stairs\n\n\"\"\"\nYou are climbing a staircase. It takes n steps to reach the top.\nEach time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?\n\nExample 1:\nInput: n = 2\nOutput: 2\nExplanation: 1+1 or 2\n\nExample 2:\nInput: n = 3\nOutput: 3\nExplanation: 1+1+1 or 1+2 or 2+1\n\"\"\"\n\ndef climbStairs(n):\n    \"\"\"\n    :type n: int\n    :rtype: int\n    \"\"\"\n    # TODO: implement using dynamic programming\n    pass"
+            }
+        ],
         "others": [
             {
                 "id": "two-sum",
