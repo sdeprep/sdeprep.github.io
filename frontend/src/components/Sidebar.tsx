@@ -339,6 +339,19 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts, ...props }
         </div>
       )}
 
+      {/* Add link to notes.html for left sidebar */}
+      {position === 'left' && (
+        <div className="flex flex-col gap-4">
+          <a
+            href="https://gaviral.github.io/sde_prep/"
+            className={`hover:underline ${solarizedText}`}
+            style={{ color: solarizedText }}
+          >
+            Notes
+          </a>
+        </div>
+      )}
+
       {/* Questions List for Left Sidebar */}
       {position === 'left' && (
         <div className="flex flex-col h-full">
