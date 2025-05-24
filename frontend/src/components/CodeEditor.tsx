@@ -178,31 +178,50 @@ print("Hello, World!")`,
   };
 
   return (
-    <div className="code-editor-container" style={updatedContainerStyle}>
-      <Editor
-        value={code}
-        defaultLanguage={defaultLanguage}
-        defaultPath={defaultPath}
-        language={language}
-        path={path}
-        theme={themeToUse}
-        line={line}
-        loading={loading}
-        options={options}
-        overrideServices={overrideServices}
-        saveViewState={saveViewState}
-        keepCurrentModel={keepCurrentModel}
-        height={height}
-        width={width}
-        className={className}
-        wrapperProps={wrapperProps}
-        beforeMount={handleEditorBeforeMount}
-        onMount={onMount}
-        onChange={handleCodeChange}
-        onValidate={onValidate}
-      />
+    <div className="code-editor-wrapper">
+      {/* Question Title */}
+      {selectedQuestion && (
+        <div
+          className="question-title"
+          style={{
+            textAlign: 'center',
+            marginBottom: '16px',
+            fontSize: '24px',
+            fontWeight: '600',
+            color: isDarkMode ? solarized.base0 : solarized.base00,
+            fontFamily: 'system-ui, -apple-system, sans-serif'
+          }}
+        >
+          {selectedQuestion.title}
+        </div>
+      )}
 
-      {/* Removed complex animation styles - now using direct audioLevel control */}
+      <div className="code-editor-container" style={updatedContainerStyle}>
+        <Editor
+          value={code}
+          defaultLanguage={defaultLanguage}
+          defaultPath={defaultPath}
+          language={language}
+          path={path}
+          theme={themeToUse}
+          line={line}
+          loading={loading}
+          options={options}
+          overrideServices={overrideServices}
+          saveViewState={saveViewState}
+          keepCurrentModel={keepCurrentModel}
+          height={height}
+          width={width}
+          className={className}
+          wrapperProps={wrapperProps}
+          beforeMount={handleEditorBeforeMount}
+          onMount={onMount}
+          onChange={handleCodeChange}
+          onValidate={onValidate}
+        />
+
+        {/* Removed complex animation styles - now using direct audioLevel control */}
+      </div>
     </div>
   );
 };
