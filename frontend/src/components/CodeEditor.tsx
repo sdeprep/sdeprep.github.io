@@ -81,7 +81,7 @@ print("Hello, World!")`,
         setCode(savedCode);
       } else {
         // Use the question's default code if no saved code exists
-        setCode(selectedQuestion.code || defaultValue);
+        setCode(defaultValue);
       }
     }
   }, [selectedQuestion, defaultValue]);

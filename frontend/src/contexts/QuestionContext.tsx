@@ -11,7 +11,6 @@ interface Question {
     id: string;
     title: string;
     category: string;
-    code: string;
 }
 
 interface QuestionContextType {
@@ -20,6 +19,7 @@ interface QuestionContextType {
     selectedQuestion: Question | null;
     selectQuestion: (question: Question) => void;
     getQuestionsByCategory: (categoryId: string) => Question[];
+    getQuestionCode: (questionId: string) => Promise<string>;
 }
 
 const QuestionContext = createContext<QuestionContextType | undefined>(undefined);
@@ -61,6 +61,19 @@ export const QuestionProvider: React.FC<QuestionProviderProps> = ({ children }) 
         return questions.filter(question => question.category === categoryId);
     };
 
+    const getQuestionCode = async (questionId: string): Promise<string> => {
+        try {
+            const response = await fetch(`/src/data/questions/${questionId}.py`);
+            if (!response.ok) {
+                throw new Error(`Failed to load code for ${questionId}`);
+            }
+            return await response.text();
+        } catch (error) {
+            console.error(`Error loading code for ${questionId}:`, error);
+            return `# Error loading code for ${questionId}\n# Please check if the file exists at /src/data/questions/${questionId}.py\n\ndef placeholder():\n    pass`;
+        }
+    };
+
     useEffect(() => {
         // Save selected question to localStorage
         if (selectedQuestion) {
@@ -74,7 +87,8 @@ export const QuestionProvider: React.FC<QuestionProviderProps> = ({ children }) 
             questions,
             selectedQuestion,
             selectQuestion,
-            getQuestionsByCategory
+            getQuestionsByCategory,
+            getQuestionCode
         }}>
             {children}
         </QuestionContext.Provider>

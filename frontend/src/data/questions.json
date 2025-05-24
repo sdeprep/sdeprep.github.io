@@ -36,54 +36,47 @@
             {
                 "id": "merge-sort",
                 "title": "Merge Sort",
-                "category": "sorting",
-                "code": "\"\"\"\n- Task: sort array in ascending order\n- Algorithm: divide & conquer\n- Example:\n  - Input: [38,27,43,3,9,82,10]\n  - Output: [3,9,10,27,38,43,82]\n- Time: O(n log n)\n- Space: O(n)\n\"\"\"\n\ndef mergeSort(arr):\n    pass"
+                "category": "sorting"
             }
         ],
         "recursion": [
             {
                 "id": "fibonacci",
                 "title": "Fibonacci Sequence",
-                "category": "recursion",
-                "code": "\"\"\"\n- Task: find nth Fibonacci number\n- Pattern: F(n) = F(n-1) + F(n-2)\n- Example:\n  - Input: n = 6\n  - Output: 8\n  - Sequence: 0,1,1,2,3,5,8,13,21...\n\"\"\"\n\ndef fibonacci(n):\n    pass"
+                "category": "recursion"
             }
         ],
         "trees": [
             {
                 "id": "binary-tree-level-order",
                 "title": "BFS",
-                "category": "trees",
-                "code": "\"\"\"\n- Task: level-order traversal  \n  - top→bottom  \n  - left→right  \n- Node: TreeNode(val,left,right)\n- Example  \n  - Tree  \n        3\n       / \\\n      9  20\n         / \\\n        15  7\n  - Output [[3],[9,20],[15,7]]\n\"\"\"\nfrom typing import List\n\n\nclass Solution:\n    def levelOrder(self, root) -> List[List[int]]:\n        pass"
+                "category": "trees"
             },
             {
                 "id": "binary-tree-level-order-bottom",
                 "title": "BFS (Bottom-Up)",
-                "category": "trees",
-                "code": "\"\"\"\n- Task: level-order traversal  \n  - bottom→top  \n  - left→right  \n- Node: TreeNode(val,left,right)\n- Example  \n  - Tree  \n        3\n       / \\\n      9  20\n         / \\\n        15  7\n  - Output [[15,7],[9,20],[3]]\n\"\"\"\nfrom typing import List\n\n\nclass Solution:\n    def levelOrderBottom(self, root) -> List[List[int]]:\n        pass"
+                "category": "trees"
             }
         ],
         "graphs": [
             {
                 "id": "graph-dfs",
                 "title": "Graph DFS",
-                "category": "graphs",
-                "code": "\"\"\"\n- Task: depth-first search traversal\n- Structure: adjacency list\n- Example:\n  - Input: graph={0:[1,2], 1:[0,3], 2:[0], 3:[1]}, start=0\n  - Output: [0,1,3,2] (one possible order)\n\"\"\"\n\ndef dfs(graph, start):\n    pass"
+                "category": "graphs"
             }
         ],
         "dynamic-programming": [
             {
                 "id": "climbing-stairs",
                 "title": "Climbing Stairs",
-                "category": "dynamic-programming",
-                "code": "\"\"\"\n- Task: count distinct ways to climb n steps\n- Rule: can climb 1 or 2 steps at a time\n- Example:\n  - Input: n = 3\n  - Output: 3\n  - Ways: 1+1+1, 1+2, 2+1\n\"\"\"\n\ndef climbStairs(n):\n    pass"
+                "category": "dynamic-programming"
             }
         ],
         "others": [
             {
                 "id": "two-sum",
                 "title": "Two Sum",
-                "category": "others",
-                "code": "\"\"\"\n- Task: find indices of two numbers that add up to target\n- Constraint: exactly one solution, no duplicate elements\n- Example:\n  - Input: nums=[2,7,11,15], target=9\n  - Output: [0,1]\n  - Explanation: nums[0] + nums[1] = 2 + 7 = 9\n\"\"\"\n\ndef twoSum(nums, target):\n    pass"
+                "category": "others"
             }
         ]
     }
