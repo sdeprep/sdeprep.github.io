@@ -29,9 +29,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     });
 
     const [visualEffectsEnabled, setVisualEffectsEnabled] = useState(() => {
-        // Initialize from localStorage or default to true
+        // Initialize from localStorage or default to false
         const savedEffects = localStorage.getItem('visualEffects');
-        return savedEffects !== 'false'; // Default to true unless explicitly disabled
+        return savedEffects === 'true'; // Default to false unless explicitly enabled
     });
 
     const toggleTheme = () => {
