@@ -10,7 +10,6 @@ interface Category {
 interface Question {
     id: string;
     title: string;
-    difficulty: 'Easy' | 'Medium' | 'Hard';
     category: string;
     code: string;
 }
