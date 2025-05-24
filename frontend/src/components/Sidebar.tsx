@@ -30,8 +30,26 @@ const positionStyles: { [key: string]: { [key: string]: string } } = {
 
 const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts, ...props }) => {
   const [isHidden, setIsHidden] = useState(true);
+  const [expandedCategories, setExpandedCategories] = useState<{ [key: string]: boolean }>({});
   const { isDarkMode, visualEffectsEnabled, toggleTheme, toggleVisualEffects } = useTheme();
-  const { questions, selectedQuestion, selectQuestion } = useQuestions();
+  const { categories, questions, selectedQuestion, selectQuestion, getQuestionsByCategory } = useQuestions();
+
+  // Initialize expanded state for categories with questions
+  React.useEffect(() => {
+    const initialExpanded: { [key: string]: boolean } = {};
+    categories.forEach(category => {
+      const hasQuestions = getQuestionsByCategory(category.id).length > 0;
+      initialExpanded[category.id] = hasQuestions;
+    });
+    setExpandedCategories(initialExpanded);
+  }, [categories, getQuestionsByCategory]);
+
+  const toggleCategory = (categoryId: string) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [categoryId]: !prev[categoryId]
+    }));
+  };
 
   // Solarized color palette
   const solarized = {
@@ -342,47 +360,136 @@ const Sidebar: React.FC<SidebarProps> = ({ position, onShowShortcuts, ...props }
       {/* Questions List for Left Sidebar */}
       {position === 'left' && (
         <div className="flex flex-col h-full">
-          <h3 className={`text-lg font-semibold mb-4`} style={{ color: solarizedText }}>
-            Questions
+          <h3 className={`text-lg font-semibold mb-6`} style={{ color: solarizedText }}>
+            Problems
           </h3>
-          <div className="flex-1 overflow-y-auto">
-            {questions.map((question) => (
-              <div
-                key={question.id}
-                onClick={() => selectQuestion(question)}
-                className={`p-3 mb-2 rounded-lg cursor-pointer transition-all duration-200`}
-                style={{
-                  backgroundColor: selectedQuestion?.id === question.id
-                    ? solarized.blue
-                    : (isDarkMode ? solarized.base02 : solarized.base2),
-                  color: selectedQuestion?.id === question.id
-                    ? solarized.base3
-                    : solarizedText,
-                  border: `1px solid ${solarized.base01}`,
-                }}
-                onMouseEnter={(e) => {
-                  if (selectedQuestion?.id !== question.id) {
-                    e.currentTarget.style.backgroundColor = isDarkMode ? solarized.base01 : solarized.base1;
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (selectedQuestion?.id !== question.id) {
-                    e.currentTarget.style.backgroundColor = isDarkMode ? solarized.base02 : solarized.base2;
-                  }
-                }}
-              >
-                <div className="font-medium text-sm">{question.title}</div>
-                <div className={`text-xs mt-1`} style={{
-                  color: question.difficulty === 'Easy'
-                    ? solarized.green
-                    : question.difficulty === 'Medium'
-                      ? solarized.yellow
-                      : solarized.red
-                }}>
-                  {question.difficulty}
+          <div className="flex-1 overflow-y-auto space-y-4">
+            {categories.map((category) => {
+              const categoryQuestions = getQuestionsByCategory(category.id);
+              const hasQuestions = categoryQuestions.length > 0;
+              const isExpanded = expandedCategories[category.id] || false;
+
+              if (!hasQuestions) return null; // Don't show empty categories
+
+              return (
+                <div key={category.id} className="category-group">
+                  {/* Category Header */}
+                  <div
+                    onClick={() => toggleCategory(category.id)}
+                    className="flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all duration-200 group"
+                    style={{
+                      backgroundColor: isDarkMode ? solarized.base02 : solarized.base2,
+                      border: `1px solid ${solarized.base01}20`,
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = isDarkMode ? solarized.base01 : solarized.base1;
+                      e.currentTarget.style.borderColor = `${solarized.base01}40`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = isDarkMode ? solarized.base02 : solarized.base2;
+                      e.currentTarget.style.borderColor = `${solarized.base01}20`;
+                    }}
+                  >
+                    <div className="flex items-center space-x-3">
+                      {/* Category Icon */}
+                      <div
+                        className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200"
+                        style={{
+                          backgroundColor: isDarkMode ? solarized.blue : solarized.yellow,
+                          opacity: 0.8
+                        }}
+                      >
+                        <span className="text-xs font-bold" style={{ color: solarized.base3 }}>
+                          {category.name.charAt(0)}
+                        </span>
+                      </div>
+
+                      {/* Category Info */}
+                      <div>
+                        <div className="font-medium text-sm" style={{ color: solarizedText }}>
+                          {category.name}
+                        </div>
+                        <div className="text-xs opacity-60" style={{ color: solarizedText }}>
+                          {categoryQuestions.length} problem{categoryQuestions.length !== 1 ? 's' : ''}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Expand/Collapse Arrow */}
+                    <div
+                      className="transition-transform duration-200"
+                      style={{
+                        transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
+                        color: solarizedText,
+                        opacity: 0.6
+                      }}
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M9 18l6-6-6-6" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Questions List */}
+                  <div
+                    className="overflow-hidden transition-all duration-300 ease-in-out"
+                    style={{
+                      maxHeight: isExpanded ? `${categoryQuestions.length * 60}px` : '0px',
+                      opacity: isExpanded ? 1 : 0
+                    }}
+                  >
+                    <div className="mt-2 ml-4 space-y-2">
+                      {categoryQuestions.map((question) => (
+                        <div
+                          key={question.id}
+                          onClick={() => selectQuestion(question)}
+                          className="p-3 rounded-lg cursor-pointer transition-all duration-200 group relative"
+                          style={{
+                            backgroundColor: selectedQuestion?.id === question.id
+                              ? `${isDarkMode ? solarized.blue : solarized.yellow}20`
+                              : 'transparent',
+                            borderLeft: selectedQuestion?.id === question.id
+                              ? `3px solid ${isDarkMode ? solarized.blue : solarized.yellow}`
+                              : '3px solid transparent',
+                            marginLeft: '8px'
+                          }}
+                          onMouseEnter={(e) => {
+                            if (selectedQuestion?.id !== question.id) {
+                              e.currentTarget.style.backgroundColor = `${isDarkMode ? solarized.base01 : solarized.base1}30`;
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (selectedQuestion?.id !== question.id) {
+                              e.currentTarget.style.backgroundColor = 'transparent';
+                            }
+                          }}
+                        >
+                          {/* Question Title */}
+                          <div
+                            className="font-medium text-sm leading-relaxed"
+                            style={{
+                              color: selectedQuestion?.id === question.id
+                                ? (isDarkMode ? solarized.blue : solarized.yellow)
+                                : solarizedText
+                            }}
+                          >
+                            {question.title}
+                          </div>
+
+                          {/* Selected Indicator */}
+                          {selectedQuestion?.id === question.id && (
+                            <div
+                              className="absolute right-3 top-1/2 transform -translate-y-1/2 w-2 h-2 rounded-full"
+                              style={{ backgroundColor: isDarkMode ? solarized.blue : solarized.yellow }}
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}

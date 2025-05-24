@@ -1,17 +1,26 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import questionsData from '../data/questions.json';
 
+interface Category {
+    id: string;
+    name: string;
+    description: string;
+}
+
 interface Question {
     id: string;
     title: string;
     difficulty: 'Easy' | 'Medium' | 'Hard';
+    category: string;
     code: string;
 }
 
 interface QuestionContextType {
+    categories: Category[];
     questions: Question[];
     selectedQuestion: Question | null;
     selectQuestion: (question: Question) => void;
+    getQuestionsByCategory: (categoryId: string) => Question[];
 }
 
 const QuestionContext = createContext<QuestionContextType | undefined>(undefined);
@@ -29,6 +38,7 @@ interface QuestionProviderProps {
 }
 
 export const QuestionProvider: React.FC<QuestionProviderProps> = ({ children }) => {
+    const [categories] = useState<Category[]>(questionsData.categories as Category[]);
     const [questions] = useState<Question[]>(questionsData.questions as Question[]);
     const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(() => {
         // Initialize from localStorage or default to first question
@@ -44,6 +54,10 @@ export const QuestionProvider: React.FC<QuestionProviderProps> = ({ children }) 
         setSelectedQuestion(question);
     };
 
+    const getQuestionsByCategory = (categoryId: string): Question[] => {
+        return questions.filter(question => question.category === categoryId);
+    };
+
     useEffect(() => {
         // Save selected question to localStorage
         if (selectedQuestion) {
@@ -52,7 +66,13 @@ export const QuestionProvider: React.FC<QuestionProviderProps> = ({ children }) 
     }, [selectedQuestion]);
 
     return (
-        <QuestionContext.Provider value={{ questions, selectedQuestion, selectQuestion }}>
+        <QuestionContext.Provider value={{
+            categories,
+            questions,
+            selectedQuestion,
+            selectQuestion,
+            getQuestionsByCategory
+        }}>
             {children}
         </QuestionContext.Provider>
     );
