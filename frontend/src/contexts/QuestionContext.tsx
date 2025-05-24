@@ -38,15 +38,19 @@ interface QuestionProviderProps {
 
 export const QuestionProvider: React.FC<QuestionProviderProps> = ({ children }) => {
     const [categories] = useState<Category[]>(questionsData.categories as Category[]);
-    const [questions] = useState<Question[]>(questionsData.questions as Question[]);
+
+    // Flatten the nested questions structure into a single array
+    const allQuestions = Object.values(questionsData.questions).flat() as Question[];
+    const [questions] = useState<Question[]>(allQuestions);
+
     const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(() => {
         // Initialize from localStorage or default to first question
         const savedQuestionId = localStorage.getItem('selectedQuestionId');
         if (savedQuestionId) {
-            const found = (questionsData.questions as Question[]).find(q => q.id === savedQuestionId);
-            return found || (questionsData.questions as Question[])[0];
+            const found = allQuestions.find(q => q.id === savedQuestionId);
+            return found || allQuestions[0];
         }
-        return (questionsData.questions as Question[])[0];
+        return allQuestions[0];
     });
 
     const selectQuestion = (question: Question) => {
