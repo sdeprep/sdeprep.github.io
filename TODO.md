@@ -1,0 +1,12 @@
+- fix and arrange the list below in correct order
+- actual interview things:
+  - discuss the problem
+  - discuss the solution
+  - talk about the corner cases
+  - talk about the edge cases
+  - talk about the time complexity
+  - talk about the space complexity
+  - talk about the trade-offs
+  - talk about the assumptions
+  - talk about the constraints
+- 
