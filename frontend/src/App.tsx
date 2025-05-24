@@ -11,6 +11,56 @@ import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { QuestionProvider } from './contexts/QuestionContext';
 import { detectWakeWords } from './utils/speechUtils';
 
+// TypeScript interfaces for Speech Recognition API
+interface SpeechRecognitionResult {
+  [index: number]: SpeechRecognitionAlternative;
+  length: number;
+  isFinal: boolean;
+}
+
+interface SpeechRecognitionAlternative {
+  transcript: string;
+  confidence: number;
+}
+
+interface SpeechRecognitionResultList {
+  [index: number]: SpeechRecognitionResult;
+  length: number;
+}
+
+interface SpeechRecognitionEvent {
+  results: SpeechRecognitionResultList;
+  resultIndex: number;
+}
+
+interface SpeechRecognitionErrorEvent {
+  error: string;
+  message: string;
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start(): void;
+  stop(): void;
+  onstart: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void) | null;
+  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => void) | null;
+  onend: ((this: SpeechRecognition, ev: Event) => void) | null;
+}
+
+interface SpeechRecognitionConstructor {
+  new(): SpeechRecognition;
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition?: SpeechRecognitionConstructor;
+    webkitSpeechRecognition?: SpeechRecognitionConstructor;
+  }
+}
+
 function AppContent() {
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [toast, setToast] = useState({ message: '', isVisible: false });
@@ -34,15 +84,19 @@ function AppContent() {
     base3: '#fdf6e3',  // lightest background
   };
 
-  const showToast = (message: string) => {
+  const showToast = useCallback((message: string) => {
     setToast({ message, isVisible: true });
-  };
+  }, []);
 
   const hideToast = () => {
     setToast({ message: '', isVisible: false });
   };
 
-  const showTranscriptToast = (message: string, duration?: number) => {
+  const hideTranscriptToast = useCallback(() => {
+    setShowTranscription(false);
+  }, []);
+
+  const showTranscriptToast = useCallback((message: string, duration?: number) => {
     setTranscriptionMessage(message);
     setShowTranscription(true);
 
@@ -53,11 +107,7 @@ function AppContent() {
         hideTranscriptToast();
       }, duration || 3000); // Default 3 seconds
     }
-  };
-
-  const hideTranscriptToast = () => {
-    setShowTranscription(false);
-  };
+  }, [hideTranscriptToast]);
 
   const handleShowShortcuts = () => {
     setShowShortcuts(true);
@@ -69,134 +119,8 @@ function AppContent() {
   const isListeningRef = useRef(false);
 
   // Speech Recognition for transcript toast
-  const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-  const [recognition, setRecognition] = useState<any>(null);
-
-  useEffect(() => {
-    if (SpeechRecognition) {
-      const recognitionInstance = new SpeechRecognition();
-      recognitionInstance.continuous = true;
-      recognitionInstance.interimResults = true;
-      recognitionInstance.lang = 'en-US';
-
-      recognitionInstance.onstart = () => {
-        console.log('Speech recognition started - isAwakeMode:', isAwakeMode);
-        if (isAwakeMode) {
-          showTranscriptToast('Listening...', 0); // Duration 0 means don't auto-hide
-        }
-      };
-
-      recognitionInstance.onresult = (event: any) => {
-        let finalTranscript = '';
-        let interimTranscript = '';
-
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const transcript = event.results[i][0].transcript;
-          if (event.results[i].isFinal) {
-            finalTranscript += transcript;
-          } else {
-            interimTranscript += transcript;
-          }
-        }
-
-        const currentTranscript = finalTranscript || interimTranscript;
-
-        if (isAwakeMode) {
-          // Awake mode: show all transcripts and handle commands
-          if (!isPaused && currentTranscript) {
-            // Simply update the message - the component handles smooth transitions
-            setTranscriptionMessage(currentTranscript);
-          }
-
-          // Check for commands in awake mode
-          if (finalTranscript) {
-            const command = detectWakeWords(finalTranscript);
-            if (command) {
-              if (command.action === 'pause') {
-                setIsPaused(true);
-                showTranscriptToast('Paused - say "resume listening" or "let\'s go" to continue');
-              } else if (command.action === 'resume' || command.action === 'wake_up') {
-                setIsPaused(false);
-                showTranscriptToast('Listening...', 0); // Duration 0 means don't auto-hide
-              }
-            }
-          }
-
-          // Legacy stop commands that return to sleep mode
-          if (finalTranscript.toLowerCase().includes('stop recording') ||
-            finalTranscript.toLowerCase().includes('go to sleep')) {
-            setIsAwakeMode(false); // Return to sleep mode
-            setIsPaused(false);
-            recognitionInstance.stop();
-          }
-        } else {
-          // Sleep mode: only listen for wake words
-          if (finalTranscript) {
-            const wakeWord = detectWakeWords(finalTranscript);
-            if (wakeWord && wakeWord.action === 'wake_up') {
-              console.log('Wake word detected:', wakeWord.phrase);
-              setIsAwakeMode(true);
-              showTranscriptToast('Listening...', 0); // Duration 0 means don't auto-hide
-            }
-          }
-        }
-      };
-
-      recognitionInstance.onerror = (event: any) => {
-        console.error('Speech recognition error:', event.error);
-
-        // Only hide transcription toast for serious errors, not for expected ones like "aborted"
-        if (event.error !== 'aborted' && event.error !== 'no-speech') {
-          hideTranscriptToast();
-          showToast(`❌ Speech recognition error: ${event.error}`);
-        }
-      };
-
-      recognitionInstance.onend = () => {
-        console.log('Speech recognition ended');
-
-        // Only hide transcription toast if we're not in awake mode
-        if (!isAwakeMode) {
-          hideTranscriptToast();
-        }
-
-        // In sleep mode, automatically restart recognition
-        if (!isAwakeMode && isListening) {
-          setTimeout(() => {
-            try {
-              recognitionInstance.start();
-            } catch (error) {
-              console.error('Error restarting speech recognition:', error);
-            }
-          }, 100);
-        }
-      };
-
-      setRecognition(recognitionInstance);
-    } else {
-      console.warn('Speech Recognition not supported in this browser');
-    }
-  }, [isAwakeMode]);
-
-  // Auto-start speech recognition on page load (sleep mode)
-  useEffect(() => {
-    const autoStartRecognition = async () => {
-      try {
-        console.log('Auto-starting speech recognition in sleep mode...');
-        // Request microphone permission and start audio capture
-        await startAudioCapture();
-      } catch (error) {
-        console.error('Failed to auto-start speech recognition:', error);
-        showToast('⚠️ Please allow microphone access for voice commands');
-      }
-    };
-
-    // Only auto-start if recognition is available
-    if (recognition) {
-      const timer = setTimeout(autoStartRecognition, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [recognition]);
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
 
   const startAudioCapture = useCallback(async () => {
     try {
@@ -262,7 +186,133 @@ function AppContent() {
       console.error('Error accessing microphone:', error);
       showToast('❌ Error accessing microphone');
     }
-  }, [recognition]);
+  }, [recognition, showToast, setAudioLevel, setIsListening, setStream, setAudioContext]);
+
+  useEffect(() => {
+    if (SpeechRecognition) {
+      const recognitionInstance = new SpeechRecognition();
+      recognitionInstance.continuous = true;
+      recognitionInstance.interimResults = true;
+      recognitionInstance.lang = 'en-US';
+
+      recognitionInstance.onstart = () => {
+        console.log('Speech recognition started - isAwakeMode:', isAwakeMode);
+        if (isAwakeMode) {
+          showTranscriptToast('Listening...', 0); // Duration 0 means don't auto-hide
+        }
+      };
+
+      recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
+        let finalTranscript = '';
+        let interimTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript;
+          } else {
+            interimTranscript += transcript;
+          }
+        }
+
+        const currentTranscript = finalTranscript || interimTranscript;
+
+        if (isAwakeMode) {
+          // Awake mode: show all transcripts and handle commands
+          if (!isPaused && currentTranscript) {
+            // Simply update the message - the component handles smooth transitions
+            setTranscriptionMessage(currentTranscript);
+          }
+
+          // Check for commands in awake mode
+          if (finalTranscript) {
+            const command = detectWakeWords(finalTranscript);
+            if (command) {
+              if (command.action === 'pause') {
+                setIsPaused(true);
+                showTranscriptToast('Paused - say "resume listening" or "let\'s go" to continue');
+              } else if (command.action === 'resume' || command.action === 'wake_up') {
+                setIsPaused(false);
+                showTranscriptToast('Listening...', 0); // Duration 0 means don't auto-hide
+              }
+            }
+          }
+
+          // Legacy stop commands that return to sleep mode
+          if (finalTranscript.toLowerCase().includes('stop recording') ||
+            finalTranscript.toLowerCase().includes('go to sleep')) {
+            setIsAwakeMode(false); // Return to sleep mode
+            setIsPaused(false);
+            recognitionInstance.stop();
+          }
+        } else {
+          // Sleep mode: only listen for wake words
+          if (finalTranscript) {
+            const wakeWord = detectWakeWords(finalTranscript);
+            if (wakeWord && wakeWord.action === 'wake_up') {
+              console.log('Wake word detected:', wakeWord.phrase);
+              setIsAwakeMode(true);
+              showTranscriptToast('Listening...', 0); // Duration 0 means don't auto-hide
+            }
+          }
+        }
+      };
+
+      recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
+        console.error('Speech recognition error:', event.error);
+
+        // Only hide transcription toast for serious errors, not for expected ones like "aborted"
+        if (event.error !== 'aborted' && event.error !== 'no-speech') {
+          hideTranscriptToast();
+          showToast(`❌ Speech recognition error: ${event.error}`);
+        }
+      };
+
+      recognitionInstance.onend = () => {
+        console.log('Speech recognition ended');
+
+        // Only hide transcription toast if we're not in awake mode
+        if (!isAwakeMode) {
+          hideTranscriptToast();
+        }
+
+        // In sleep mode, automatically restart recognition
+        if (!isAwakeMode && isListening) {
+          setTimeout(() => {
+            try {
+              recognitionInstance.start();
+            } catch (error) {
+              console.error('Error restarting speech recognition:', error);
+            }
+          }, 100);
+        }
+      };
+
+      setRecognition(recognitionInstance);
+    } else {
+      console.warn('Speech Recognition not supported in this browser');
+    }
+  }, [isAwakeMode, SpeechRecognition, showTranscriptToast, hideTranscriptToast, isPaused, setTranscriptionMessage, setIsPaused, setIsAwakeMode, isListening, showToast]);
+
+  // Auto-start speech recognition on page load (sleep mode)
+  useEffect(() => {
+    const autoStartRecognition = async () => {
+      try {
+        console.log('Auto-starting speech recognition in sleep mode...');
+        // Request microphone permission and start audio capture
+        await startAudioCapture();
+      } catch (error) {
+        console.error('Failed to auto-start speech recognition:', error);
+        showToast('⚠️ Please allow microphone access for voice commands');
+      }
+    };
+
+    // Only auto-start if recognition is available
+    if (recognition) {
+      const timer = setTimeout(autoStartRecognition, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [recognition, startAudioCapture, showToast]);
 
   const stopAudioCapture = () => {
     isListeningRef.current = false;
@@ -378,11 +428,8 @@ function AppContent() {
     };
 
     document.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isMac, showShortcuts]); // Added isMac dependency back for keyboard shortcuts
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isMac, showShortcuts, showToast]);
 
   // Apply Solarized background to entire application
   const appStyle: React.CSSProperties = {

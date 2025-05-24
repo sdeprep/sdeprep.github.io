@@ -147,7 +147,7 @@ const WaterRipples: React.FC<WaterRipplesProps> = ({ audioLevel, isListening }) 
         }
 
         needsUpdateRef.current = true;
-    }, []);
+    }, [SETTINGS.audioAmplitudeMultiplier, SETTINGS.audioGrowthMultiplier, SETTINGS.baseAmplitude, SETTINGS.baseGrowthSpeed, SETTINGS.maxAge, SETTINGS.maxRipples, SETTINGS.ringWidth, SETTINGS.rippleInterval, SETTINGS.wavelength]);
 
     // Draw single ripple
     const drawRipple = useCallback((ctx: CanvasRenderingContext2D, ripple: Ripple) => {
@@ -198,7 +198,7 @@ const WaterRipples: React.FC<WaterRipplesProps> = ({ audioLevel, isListening }) 
         }
 
         ctx.restore();
-    }, [isDarkMode]);
+    }, [isDarkMode, solarized.blue, solarized.yellow]);
 
     // Main animation loop
     const animate = useCallback(() => {
@@ -241,7 +241,7 @@ const WaterRipples: React.FC<WaterRipplesProps> = ({ audioLevel, isListening }) 
 
         needsUpdateRef.current = false;
         animationFrameRef.current = requestAnimationFrame(animate);
-    }, [audioLevel, isListening, isReducedMotion, createRipple, drawRipple]);
+    }, [audioLevel, isListening, isReducedMotion, createRipple, drawRipple, SETTINGS.fadeSpeed, SETTINGS.rippleThreshold]);
 
     // Initialize canvas and start animation
     useEffect(() => {

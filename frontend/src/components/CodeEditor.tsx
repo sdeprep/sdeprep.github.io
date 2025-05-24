@@ -1,5 +1,5 @@
+import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
-import { useState, useEffect } from 'react';
 import { useQuestions } from '../contexts/QuestionContext';
 import { useTheme } from '../contexts/ThemeContext';
 import solarizedDark from '../themes/solarized-dark.json';
@@ -95,15 +95,21 @@ print("Hello, World!")`,
   };
 
   // Handle Monaco editor setup
-  const handleEditorBeforeMount = (monaco: any) => {
+  const handleEditorBeforeMount = (monaco: unknown) => {
     // Define Solarized themes
-    monaco.editor.defineTheme('solarized-dark', {
+    const monacoEditor = monaco as {
+      editor: {
+        defineTheme: (themeName: string, themeData: unknown) => void;
+      };
+    };
+
+    monacoEditor.editor.defineTheme('solarized-dark', {
       base: 'vs-dark',
       inherit: true,
       ...solarizedDark
     });
 
-    monaco.editor.defineTheme('solarized-light', {
+    monacoEditor.editor.defineTheme('solarized-light', {
       base: 'vs',
       inherit: true,
       ...solarizedLight
