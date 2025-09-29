@@ -233,6 +233,7 @@ function AppContent() {
           if (!isPaused && currentTranscript) {
             // Simply update the message - the component handles smooth transitions
             setTranscriptionMessage(currentTranscript);
+            setShowTranscription(true); // Ensure transcription is visible
           }
 
           // Check for commands in awake mode
@@ -244,7 +245,10 @@ function AppContent() {
                 showTranscriptToast('Paused - say "resume listening" or "let\'s go" to continue');
               } else if (command.action === 'resume' || command.action === 'wake_up') {
                 setIsPaused(false);
-                showTranscriptToast('Listening...', 0); // Duration 0 means don't auto-hide
+                // Don't overwrite transcription with "Listening..." - just ensure it's visible
+                if (!currentTranscript || currentTranscript.trim() === '') {
+                  showTranscriptToast('Listening...', 0); // Only show if no current speech
+                }
               }
             }
           }
@@ -287,8 +291,8 @@ function AppContent() {
           hideTranscriptToast();
         }
 
-        // In sleep mode, automatically restart recognition
-        if (!isAwakeMode && isListening) {
+        // Restart recognition if listening (both sleep and awake modes)
+        if (isListening) {
           setTimeout(() => {
             try {
               recognitionInstance.start();
