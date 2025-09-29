@@ -78,6 +78,19 @@ function AppContent() {
   const [isPaused, setIsPaused] = useState(false); // Pause state for awake mode
   const { isDarkMode, visualEffectsEnabled } = useTheme();
 
+  // Use refs to avoid stale closure issues in speech recognition handlers
+  const isAwakeModeRef = useRef(isAwakeMode);
+  const isPausedRef = useRef(isPaused);
+
+  // Keep refs in sync with state
+  useEffect(() => {
+    isAwakeModeRef.current = isAwakeMode;
+  }, [isAwakeMode]);
+
+  useEffect(() => {
+    isPausedRef.current = isPaused;
+  }, [isPaused]);
+
   // Solarized color palette
   const solarized = {
     base03: '#002b36', // darkest background
@@ -228,23 +241,32 @@ function AppContent() {
 
         const currentTranscript = finalTranscript || interimTranscript;
 
-        if (isAwakeMode) {
+        if (isAwakeModeRef.current) {
           // Awake mode: show all transcripts and handle commands
-          if (!isPaused && currentTranscript) {
-            // Simply update the message - the component handles smooth transitions
-            setTranscriptionMessage(currentTranscript);
+          console.log('Awake mode - processing speech:', currentTranscript);
+          if (!isPausedRef.current) {
+            if (currentTranscript && currentTranscript.trim()) {
+              // Show actual speech transcription
+              setTranscriptionMessage(currentTranscript);
+              setShowTranscription(true);
+            } else {
+              // No speech detected, show listening prompt
+              setTranscriptionMessage('Listening...');
+              setShowTranscription(true);
+            }
           }
 
-          // Check for commands in awake mode
+          // Check for commands in awake mode (but don't overwrite transcription)
           if (finalTranscript) {
             const command = detectWakeWords(finalTranscript);
             if (command) {
               if (command.action === 'pause') {
                 setIsPaused(true);
-                showTranscriptToast('Paused - say "resume listening" or "let\'s go" to continue');
+                setTranscriptionMessage('Paused - say "resume listening" or "let\'s go" to continue');
+                setShowTranscription(true);
               } else if (command.action === 'resume' || command.action === 'wake_up') {
                 setIsPaused(false);
-                showTranscriptToast('Listening...', 0); // Duration 0 means don't auto-hide
+                // Don't immediately overwrite with "Listening..." - let speech detection handle it
               }
             }
           }
@@ -263,7 +285,8 @@ function AppContent() {
             if (wakeWord && wakeWord.action === 'wake_up') {
               console.log('Wake word detected:', wakeWord.phrase);
               setIsAwakeMode(true);
-              showTranscriptToast('Listening...', 0); // Duration 0 means don't auto-hide
+              setTranscriptionMessage('Listening...');
+              setShowTranscription(true);
             }
           }
         }
@@ -283,12 +306,12 @@ function AppContent() {
         console.log('Speech recognition ended');
 
         // Only hide transcription toast if we're not in awake mode
-        if (!isAwakeMode) {
+        if (!isAwakeModeRef.current) {
           hideTranscriptToast();
         }
 
-        // In sleep mode, automatically restart recognition
-        if (!isAwakeMode && isListening) {
+        // Restart recognition if listening (both sleep and awake modes)
+        if (isListening) {
           setTimeout(() => {
             try {
               recognitionInstance.start();
@@ -303,7 +326,7 @@ function AppContent() {
     } else {
       console.warn('Speech Recognition not supported in this browser');
     }
-  }, [isAwakeMode, SpeechRecognition, showTranscriptToast, hideTranscriptToast, isPaused, setTranscriptionMessage, setIsPaused, setIsAwakeMode, isListening, showToast]);
+  }, [SpeechRecognition, showTranscriptToast, hideTranscriptToast, setTranscriptionMessage, setIsPaused, setIsAwakeMode, showToast]);
 
   // Auto-start speech recognition on page load (sleep mode)
   useEffect(() => {

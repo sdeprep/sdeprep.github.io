@@ -3,6 +3,7 @@
 ########################################################
 
 # Custom .gitignore files and folders go here
+paste.md
 
 ########################################################
 # Boilerplate .gitignore by `npm create vite@latest `
