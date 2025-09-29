@@ -37,6 +37,16 @@
                 "id": "merge-sort",
                 "title": "Merge Sort",
                 "category": "sorting"
+            },
+            {
+                "id": "quick-sort",
+                "title": "Quick Sort",
+                "category": "sorting"
+            },
+            {
+                "id": "bubble-sort",
+                "title": "Bubble Sort",
+                "category": "sorting"
             }
         ],
         "recursion": [
@@ -76,6 +86,16 @@
             {
                 "id": "two-sum",
                 "title": "Two Sum",
+                "category": "others"
+            },
+            {
+                "id": "reverse-string",
+                "title": "Reverse String",
+                "category": "others"
+            },
+            {
+                "id": "palindrome-check",
+                "title": "Palindrome Check",
                 "category": "others"
             }
         ]

@@ -3,6 +3,8 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Sidebar from './components/Sidebar';
 import CodeEditor from './components/CodeEditor';
 import KeyboardShortcutsModal from './components/KeyboardShortcutsModal';
+import WelcomeModal from './components/WelcomeModal';
+import VoiceStatusIndicator from './components/VoiceStatusIndicator';
 import Toast from './components/Toast';
 import TranscriptionToast from './components/TranscriptionToast';
 import WaterRipples from './components/WaterRipples';
@@ -63,6 +65,10 @@ declare global {
 
 function AppContent() {
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(() => {
+    // Show welcome modal for first-time visitors
+    return !localStorage.getItem('hasVisited');
+  });
   const [toast, setToast] = useState({ message: '', isVisible: false });
   const [isListening, setIsListening] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0); // Direct audio level value
@@ -111,6 +117,11 @@ function AppContent() {
 
   const handleShowShortcuts = () => {
     setShowShortcuts(true);
+  };
+
+  const handleCloseWelcome = () => {
+    setShowWelcome(false);
+    localStorage.setItem('hasVisited', 'true');
   };
 
   // Audio level capture using Web Audio API
@@ -441,15 +452,23 @@ function AppContent() {
 
   return (
     <div className={`app`} style={appStyle} onClick={handleAppClick}>
-      {/* Background interaction guide layer */}
-      {visualEffectsEnabled && <BackgroundInteractionGuide audioLevel={audioLevel} isListening={isListening} />}
+      {/* Background interaction guide layer - only show when voice is active */}
+      {visualEffectsEnabled && isAwakeMode && <BackgroundInteractionGuide audioLevel={audioLevel} isListening={isListening} />}
 
-      {/* Water ripple effects layer */}
-      {visualEffectsEnabled && <WaterRipples audioLevel={audioLevel} isListening={isListening} />}
+      {/* Water ripple effects layer - only show when voice is active and audio detected */}
+      {visualEffectsEnabled && isAwakeMode && audioLevel > 0.1 && <WaterRipples audioLevel={audioLevel} isListening={isListening} />}
 
       <Sidebar position="left" data-sidebar />
       {/* <Sidebar position="bottom" /> */}
       <Sidebar position="right" onShowShortcuts={handleShowShortcuts} data-sidebar />
+
+      {/* Voice status indicator */}
+      <VoiceStatusIndicator
+        isListening={isListening}
+        isAwakeMode={isAwakeMode}
+        isPaused={isPaused}
+        audioLevel={audioLevel}
+      />
 
       {/* Main code editor */}
       <CodeEditor isListening={isListening} audioLevel={audioLevel} />
@@ -461,12 +480,47 @@ function AppContent() {
         isListening={isListening}
       />
 
+      {/* Welcome modal for first-time visitors */}
+      <WelcomeModal isOpen={showWelcome} onClose={handleCloseWelcome} />
+
       {/* Keyboard shortcuts modal */}
       <KeyboardShortcutsModal isOpen={showShortcuts} onClose={() => setShowShortcuts(false)} data-modal />
 
       {/* Toast notifications */}
       <Toast message={toast.message} isVisible={toast.isVisible} onClose={hideToast} data-toast />
 
+      {/* Subtle creator credit */}
+      <div
+        style={{
+          position: 'fixed',
+          bottom: '12px',
+          left: '12px',
+          fontSize: '11px',
+          color: isDarkMode ? solarized.base01 : solarized.base1,
+          zIndex: 50,
+          opacity: 0.7,
+          transition: 'opacity 0.3s ease',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.opacity = '1';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.opacity = '0.7';
+        }}
+      >
+        <a
+          href="https://aviralgarg.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            color: 'inherit',
+            textDecoration: 'none',
+            fontFamily: 'system-ui, -apple-system, sans-serif',
+          }}
+        >
+          aviralgarg.com
+        </a>
+      </div>
 
     </div>
   );

@@ -30,8 +30,14 @@ interface CodeEditorProps {
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
-  defaultValue = `# Hello, World!
-print("Hello, World!")`,
+  defaultValue = `# Welcome to SDE Speed Run!
+# Select a problem from the sidebar to get started
+# Say "let's go" to activate voice control
+
+def welcome():
+    print("Ready for speed run interview prep!")
+    
+welcome()`,
   defaultLanguage = 'python',
   defaultPath,
   language,
@@ -69,7 +75,7 @@ print("Hello, World!")`,
   isListening = false,
   audioLevel = 0,
 }) => {
-  const { selectedQuestion } = useQuestions();
+  const { selectedQuestion, getQuestionCode } = useQuestions();
   const { isDarkMode } = useTheme();
   const [code, setCode] = useState(defaultValue);
 
@@ -80,11 +86,19 @@ print("Hello, World!")`,
       if (savedCode) {
         setCode(savedCode);
       } else {
-        // Use the question's default code if no saved code exists
-        setCode(defaultValue);
+        // Load the question's actual code from the file
+        getQuestionCode(selectedQuestion.id).then((questionCode) => {
+          setCode(questionCode);
+        }).catch(() => {
+          // Fallback to default value if loading fails
+          setCode(defaultValue);
+        });
       }
+    } else {
+      // No question selected, show welcome message
+      setCode(defaultValue);
     }
-  }, [selectedQuestion, defaultValue]);
+  }, [selectedQuestion, defaultValue, getQuestionCode]);
 
   // Save code to localStorage when it changes
   const handleCodeChange = (value: string | undefined) => {
