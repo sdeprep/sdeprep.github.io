@@ -79,7 +79,7 @@ const VoiceStatusIndicator: React.FC<VoiceStatusIndicatorProps> = ({
       style={{
         position: 'fixed',
         top: '20px',
-        right: '20px',
+        right: '280px', // Move left to avoid sidebar overlap (264px sidebar + 16px margin)
         backgroundColor: status.bgColor,
         color: status.color,
         padding: '12px 16px',
