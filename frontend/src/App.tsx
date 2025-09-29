@@ -307,7 +307,7 @@ function AppContent() {
     } else {
       console.warn('Speech Recognition not supported in this browser');
     }
-  }, [isAwakeMode, SpeechRecognition, showTranscriptToast, hideTranscriptToast, isPaused, setTranscriptionMessage, setIsPaused, setIsAwakeMode, isListening, showToast]);
+  }, [SpeechRecognition, showTranscriptToast, hideTranscriptToast, setTranscriptionMessage, setIsPaused, setIsAwakeMode, showToast]);
 
   // Auto-start speech recognition on page load (sleep mode)
   useEffect(() => {
